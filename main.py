@@ -66,7 +66,7 @@ if "extra_temporanei" not in st.session_state:
 if "calorie_extra_totali" not in st.session_state:
     st.session_state.calorie_extra_totali = 0.0
 
-# BANCA DATI UFFICIALE DI YOUAMP COMPLETAMENTE AGGIORNATA
+# BANCA DATI UFFICIALE DI YOUAMP COMPLETAMENTE REVISIONATA NELL'ORTOGRAFIA
 BANCA_DATI = {
     # --- CARBOIDRATI ---
     "Riso Basmati": {"P": 8.0, "C": 78.0, "G": 0.8, "Kcal": 350, "cat": "Carboidrati", "sub": "Riso e Cereali"},
@@ -93,7 +93,7 @@ BANCA_DATI = {
     "Lonza di Maiale": {"P": 22.0, "C": 0.0, "G": 4.0, "Kcal": 124, "cat": "Proteine", "sub": "Carne Rossa"},
     "Macinato Magro di Manzo": {"P": 21.0, "C": 0.0, "G": 5.0, "Kcal": 129, "cat": "Proteine", "sub": "Carne Rossa"},
     "Filetto di Manzo": {"P": 20.5, "C": 0.0, "G": 3.5, "Kcal": 114, "cat": "Proteine", "sub": "Carne Rossa"},
-    "Hamburgher di Manzo": {"P": 20.0, "C": 0.0, "G": 6.0, "Kcal": 134, "cat": "Proteine", "sub": "Carne Rossa"},
+    "Hamburger di Manzo": {"P": 20.0, "C": 0.0, "G": 6.0, "Kcal": 134, "cat": "Proteine", "sub": "Carne Rossa"},
     "Carne di Cavallo": {"P": 21.5, "C": 0.0, "G": 2.7, "Kcal": 111, "cat": "Proteine", "sub": "Carne Rossa"},
     "Bacon": {"P": 14.0, "C": 1.0, "G": 35.0, "Kcal": 375, "cat": "Proteine", "sub": "Affettati e Salumi"},
     "Bresaola": {"P": 32.0, "C": 0.0, "G": 2.0, "Kcal": 151, "cat": "Proteine", "sub": "Affettati e Salumi"},
@@ -104,7 +104,7 @@ BANCA_DATI = {
     "Albume d'Uovo": {"P": 11.0, "C": 0.7, "G": 0.2, "Kcal": 52, "cat": "Proteine", "sub": "Uova"},
     "Uovo Intero": {"P": 12.4, "C": 0.0, "G": 8.7, "Kcal": 128, "cat": "Proteine", "sub": "Uova"},
     "Kefir": {"P": 3.4, "C": 4.0, "G": 1.5, "Kcal": 43, "cat": "Proteine", "sub": "Latticini e Formaggi"},
-    "Skir": {"P": 11.0, "C": 3.5, "G": 0.2, "Kcal": 60, "cat": "Proteine", "sub": "Latticini e Formaggi"},
+    "Skyr": {"P": 11.0, "C": 3.5, "G": 0.2, "Kcal": 60, "cat": "Proteine", "sub": "Latticini e Formaggi"},
     "Yogurt Greco 0%": {"P": 10.3, "C": 3.0, "G": 0.0, "Kcal": 53, "cat": "Proteine", "sub": "Latticini e Formaggi"},
     "Fiocchi di Latte": {"P": 12.0, "C": 3.0, "G": 4.5, "Kcal": 101, "cat": "Proteine", "sub": "Latticini e Formaggi"},
     "Mozzarella Light": {"P": 18.0, "C": 1.0, "G": 9.0, "Kcal": 157, "cat": "Proteine", "sub": "Latticini e Formaggi"},
@@ -178,7 +178,7 @@ BANCA_DATI = {
     "Mango": {"P": 0.8, "C": 15.0, "G": 0.4, "Kcal": 60, "cat": "Frutta", "sub": "Frutta Esotica"},
     "Cocco": {"P": 3.3, "C": 15.0, "G": 33.0, "Kcal": 354, "cat": "Frutta", "sub": "Frutta Esotica"},
     "Albicocche": {"P": 1.4, "C": 11.0, "G": 0.4, "Kcal": 48, "cat": "Frutta", "sub": "Frutta Standard"},
-    "Ciliege": {"P": 1.0, "C": 16.0, "G": 0.2, "Kcal": 50, "cat": "Frutta", "sub": "Frutta Standard"},
+    "Ciliegie": {"P": 1.0, "C": 16.0, "G": 0.2, "Kcal": 50, "cat": "Frutta", "sub": "Frutta Standard"},
     "Mela": {"P": 0.3, "C": 14.0, "G": 0.2, "Kcal": 52, "cat": "Frutta", "sub": "Frutta Standard"},
     "Succo d'Arancia": {"P": 0.7, "C": 10.0, "G": 0.2, "Kcal": 45, "cat": "Frutta", "sub": "Succhi e Bevande"},
 
@@ -188,7 +188,7 @@ BANCA_DATI = {
     "Dolcificante": {"P": 0.0, "C": 0.0, "G": 0.0, "Kcal": 0, "cat": "Dolcificanti", "sub": "Zuccheri Fit"}
 }
 
-# BANCA DATI EXTRA COMPLETA AGGIORNATA CON TUTTI I NUOVI PIATTI RICHIESTI
+# BANCA DATI EXTRA COMPLETA REVISIONATA NELL'ORTOGRAFIA
 BANCA_DATI_EXTRA_SORGENTE = {
     # --- PIZZE & PINSE ---
     "Pizza Margherita": {"Kcal": 700, "info": "1 Porzione Media"},
@@ -218,7 +218,7 @@ BANCA_DATI_EXTRA_SORGENTE = {
     "Grissini": {"Kcal": 410, "info": "100g standard"},
     "Taralli": {"Kcal": 460, "info": "100g standard"},
     "Piadina Farcita": {"Kcal": 700, "info": "1 Porzione Standard"},
-    "Panino Fastfood": {"Kcal": 650, "info": "1 Singolo Hamburgher Completo"},
+    "Panino Fastfood": {"Kcal": 650, "info": "1 Singolo Hamburger Completo"},
 
     # --- SECONDI DI CARNE ---
     "Carne di Maiale alla Griglia": {"Kcal": 450, "info": "1 Porzione Standard"},
@@ -232,7 +232,7 @@ BANCA_DATI_EXTRA_SORGENTE = {
     "Arrosto di Maiale": {"Kcal": 410, "info": "1 Porzione Standard"},
     "Arrosto di Vitello": {"Kcal": 350, "info": "1 Porzione Standard"},
     "Caprese": {"Kcal": 320, "info": "1 Porzione Standard"},
-    "Ragù d'Anitra": {"Kcal": 350, "info": "1 Porzione da Condimento"},
+    "Ragù d'Anatra": {"Kcal": 350, "info": "1 Porzione da Condimento"},
     "Trippa": {"Kcal": 280, "info": "1 Porzione Ristorante"},
     "Cotechino": {"Kcal": 450, "info": "1 Porzione 100g"},
     "Carne Bollita di Manzo": {"Kcal": 310, "info": "1 Porzione Standard"},
@@ -242,7 +242,7 @@ BANCA_DATI_EXTRA_SORGENTE = {
     "Scaloppa al Limone": {"Kcal": 380, "info": "1 Porzione Standard"},
     "Scaloppa alle Verdure": {"Kcal": 390, "info": "1 Porzione Standard"},
     "Cotoletta": {"Kcal": 550, "info": "1 Pezzo Standard"},
-    "Wurstell": {"Kcal": 270, "info": "1 Porzione 100g"},
+    "Würstel": {"Kcal": 270, "info": "1 Porzione 100g"},
     "Filetto Lardellato": {"Kcal": 480, "info": "1 Porzione Standard"},
     "Anatra al Forno": {"Kcal": 460, "info": "1 Porzione Standard"},
 
