@@ -56,16 +56,6 @@ pwa_html = """
 """
 components.html(pwa_html, height=0, width=0)
 
-# Inizializzazione degli stati di memoria dell'applicazione
-if "acqua_bevuta" not in st.session_state:
-    st.session_state.acqua_bevuta = 0.0
-if "pasti_generati" not in st.session_state:
-    st.session_state.pasti_generati = {}
-if "extra_temporanei" not in st.session_state:
-    st.session_state.extra_temporanei = {}
-if "calorie_extra_totali" not in st.session_state:
-    st.session_state.calorie_extra_totali = 0.0
-
 # BANCA DATI UFFICIALE DI YOUAMP COMPLETAMENTE AGGIORNATA
 BANCA_DATI = {
     # --- CARBOIDRATI ---
@@ -152,7 +142,7 @@ BANCA_DATI = {
     "Cipolla": {"P": 1.1, "C": 9.3, "G": 0.1, "Kcal": 40, "cat": "Verdura", "sub": "Ortaggi"},
     "Sedano": {"P": 0.7, "C": 3.0, "G": 0.2, "Kcal": 16, "cat": "Verdura", "sub": "Ortaggi"},
     "Cavolo Nero": {"P": 3.3, "C": 6.0, "G": 0.7, "Kcal": 49, "cat": "Verdura", "sub": "Ortaggi"},
-    "Zucca": {"P": 1.0, "C": 6.5, "G": 0.1, "Kcal": 26, "cat": "Verdura", "sub": "Ortaggi"},
+    "Zucca": {"P": 1.0, "C": 6.5, "G": 0.1, "Kcal": 26, "cat": "Verdura", "sub": "Zucca"},
     "Funghi": {"P": 3.1, "C": 3.3, "G": 0.3, "Kcal": 22, "cat": "Verdura", "sub": "Ortaggi"},
     "Zucchine": {"P": 1.3, "C": 1.4, "G": 0.1, "Kcal": 11, "cat": "Verdura", "sub": "Ortaggi"},
     "Spinaci": {"P": 3.4, "C": 0.6, "G": 0.7, "Kcal": 23, "cat": "Verdura", "sub": "Ortaggi"},
@@ -194,7 +184,7 @@ BANCA_DATI = {
     "Dolcificante": {"P": 0.0, "C": 0.0, "G": 0.0, "Kcal": 0, "cat": "Dolcificanti", "sub": "Zuccheri Fit"}
 }
 
-# BANCA DATI EXTRA COMPLETA AGGIORNATA E REVISIONATA NELL'ORTOGRAFIA
+# BANCA DATI EXTRA COMPLETA AGGIORNATA SECONDO LE DIRETTIVE EDITORIALI
 BANCA_DATI_EXTRA_SORGENTE = {
     # --- PIZZE & PINSE ---
     "Pizza Margherita": {"Kcal": 700, "info": "1 Porzione Media"},
@@ -283,7 +273,7 @@ BANCA_DATI_EXTRA_SORGENTE = {
     "Gamberoni": {"Kcal": 140, "info": "1 Porzione Griglia 150g"},
     "Totani": {"Kcal": 220, "info": "1 Porzione Umido/Griglia"},
     "Mazzancolle": {"Kcal": 130, "info": "1 Porzione Standard"},
-    "Capasanta Gratinata": {"Kcal": 180, "info": "2 Pezzi"},
+    "Capasanta Gratinata": {"Kcal": 180, "2 Pezzi"},
 
     # --- COLAZIONE & BAR ---
     "Croissant Integrale": {"Kcal": 260, "info": "1 Pezzo Standard"},
@@ -296,7 +286,6 @@ BANCA_DATI_EXTRA_SORGENTE = {
     "Brioche Confezionate": {"Kcal": 210, "info": "1 Merendina Standard"},
 
     # --- PASTICCERIA & DOLCI EXTRA ---
-    "Gelato Fresco": {"Kcal": 220, "info": "1 Cono Artigianale 2 gusti"},
     "Gelato Artigianale": {"Kcal": 250, "info": "1 Coppetta Media"},
     "Gelato Confezionato": {"Kcal": 180, "info": "1 Pezzo su Stecco o Cono"},
     "Cheesecake": {"Kcal": 450, "info": "1 Fetta Standard"},
@@ -315,21 +304,41 @@ BANCA_DATI_EXTRA_SORGENTE = {
     "Cioccolato al Latte": {"Kcal": 270, "info": "Mezza Barretta 50g"},
 
     # --- ALCOLICI & BEVANDE EXTRA ---
+    "Birra": {"Kcal": 150, "info": "1 Lattina/Bottiglia 33cl"},
     "Bibita Gassata Dolce": {"Kcal": 130, "info": "1 Lattina 33cl"},
     "The Zuccherati": {"Kcal": 110, "info": "1 Bicchiere/Lattina"},
     "Succo di Frutta": {"Kcal": 120, "info": "1 Bicchiere Standard"},
     "Gin Tonic": {"Kcal": 170, "info": "1 Bicchiere Standard"},
     "Spritz Aperol": {"Kcal": 140, "info": "1 Bicchiere Standard"},
-    "Spritz": {"Kcal": 120, "info": "1 Bicchiere Standard"},
-    "Prosecco": {"Kcal": 90, "info": "1 Calice Standard"},
+    "Spritz Misto": {"Kcal": 120, "info": "1 Bicchiere Standard"},
     "Calice di Prosecco": {"Kcal": 90, "info": "1 Calice Standard"},
-    "Vino Rosso": {"Kcal": 100, "info": "1 Calice Standard"},
-    "Vino Bianco": {"Kcal": 95, "info": "1 Calice Standard"},
+    "Calice di Vino Rosso": {"Kcal": 100, "info": "1 Calice Standard"},
+    "Calice di Vino Bianco": {"Kcal": 95, "info": "1 Calice Standard"},
     "Vodka": {"Kcal": 115, "info": "1 Shot 50ml"},
     "Mojito": {"Kcal": 180, "info": "1 Bicchiere Standard"}
 }
 
-# --- INTERFACCIA SINISTRA: SIDEBAR ---
+# --- LOGICA DI INIZIALIZZAZIONE E PERSISTENZA AUTOMATICA DATI (LOGIN/SALVATAGGIO) ---
+if "acqua_bevuta" not in st.session_state:
+    st.session_state.acqua_bevuta = 0.0
+if "pasti_generati" not in st.session_state:
+    st.session_state.pasti_generati = {}
+if "extra_temporanei" not in st.session_state:
+    st.session_state.extra_temporanei = {}
+
+# Inizializzazione calorie generate per i due regimi
+if "cal_generate_wo" not in st.session_state:
+    st.session_state.cal_generate_wo = 0.0
+if "cal_generate_rest" not in st.session_state:
+    st.session_state.cal_generate_rest = 0.0
+
+# Persistenza della memoria macro avanzati (Separati Workout vs Rest)
+if "macro_wo_pasti" not in st.session_state:
+    st.session_state.macro_wo_pasti = {i: {"P": 40, "C": 50, "G": 10} for i in range(1, 8)}
+if "macro_rest_pasti" not in st.session_state:
+    st.session_state.macro_rest_pasti = {i: {"P": 40, "C": 30, "G": 15} for i in range(1, 8)}
+
+# --- INTERFACCIA SINISTRA: SIDEBAR (IMPOSTAZIONI SALVATE) ---
 st.sidebar.title("Profilo e Impostazioni")
 
 foto_profilo = st.sidebar.file_uploader("Carica la tua foto profilo:", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
@@ -399,14 +408,20 @@ with st.sidebar.expander("ALIMENTI EXTRA SOCIAL"):
 
 st.sidebar.write("---")
 st.sidebar.subheader("Configurazione Avanzata Macro Pasti")
-macro_pasti_personalizzati = {}
-for i in range(1, 8):
-    with st.sidebar.expander(f"Imposta Macro Pasto {i}"):
-        st.markdown(f"**Pasto {i}**")
-        p_pasto = st.number_input(f"Proteine (g) - P{i}", value=40, key=f"p_p_{i}")
-        c_pasto = st.number_input(f"Carboidrati (g) - P{i}", value=50, key=f"c_p_{i}")
-        g_pasto = st.number_input(f"Grassi (g) - P{i}", value=10, key=f"g_p_{i}")
-        macro_pasti_personalizzati[i] = {"P": p_pasto, "C": c_pasto, "G": g_pasto}
+
+with st.sidebar.expander("GIORNI WORKOUT - MACRO PASTI"):
+    for i in range(1, 8):
+        st.markdown(f"**Pasto {i} (Workout)**")
+        st.session_state.macro_wo_pasti[i]["P"] = st.number_input(f"Proteine (g) - P{i} WO", value=st.session_state.macro_wo_pasti[i]["P"], key=f"p_wo_{i}")
+        st.session_state.macro_wo_pasti[i]["C"] = st.number_input(f"Carboidrati (g) - P{i} WO", value=st.session_state.macro_wo_pasti[i]["C"], key=f"c_wo_{i}")
+        st.session_state.macro_wo_pasti[i]["G"] = st.number_input(f"Grassi (g) - P{i} WO", value=st.session_state.macro_wo_pasti[i]["G"], key=f"g_wo_{i}")
+
+with st.sidebar.expander("GIORNI REST - MACRO PASTI"):
+    for i in range(1, 8):
+        st.markdown(f"**Pasto {i} (Rest)**")
+        st.session_state.macro_rest_pasti[i]["P"] = st.number_input(f"Proteine (g) - P{i} REST", value=st.session_state.macro_rest_pasti[i]["P"], key=f"p_rst_{i}")
+        st.session_state.macro_rest_pasti[i]["C"] = st.number_input(f"Carboidrati (g) - P{i} REST", value=st.session_state.macro_rest_pasti[i]["C"], key=f"c_rst_{i}")
+        st.session_state.macro_rest_pasti[i]["G"] = st.number_input(f"Grassi (g) - P{i} REST", value=st.session_state.macro_rest_pasti[i]["G"], key=f"g_rst_{i}")
 
 st.sidebar.write("---")
 if st.sidebar.button("Salva Impostazioni e Chiudi", use_container_width=True):
@@ -424,33 +439,43 @@ with col_toggle[1]:
 
 if giorno_workout:
     regime_testo = "WORKOUT"
-    fabbisogno_corrente = pt_kcal_wo
-    consumo_corrente = spesa_prevista_wo
+    macro_selezionati_sistema = st.session_state.macro_wo_pasti
+    # Calcolo dinamico del deficit per riga workout
+    deficit_wo = pt_kcal_wo - st.session_state.cal_generate_wo
+    deficit_rest = pt_kcal_rest - st.session_state.cal_generate_rest  # resta statico/precedente
 else:
     regime_testo = "REST"
-    fabbisogno_corrente = pt_kcal_rest
-    consumo_corrente = spesa_prevista_rest
+    macro_selezionati_sistema = st.session_state.macro_rest_pasti
+    # Calcolo dinamico del deficit per riga rest
+    deficit_wo = pt_kcal_wo - st.session_state.cal_generate_wo  # resta statico/precedente
+    deficit_rest = pt_kcal_rest - st.session_state.cal_generate_rest
 
-# Scritta del giorno monumentale centrata
+# Scritta monumentale centrata del giorno attivo
 st.markdown(f"<h2 style='text-align: center; letter-spacing: 2px; color: #00D26A;'>{regime_testo}</h2>", unsafe_allow_html=True)
 
-# Calcolo Bilancio Energetico e integrazione extra
-consumo_finale_calcolato = consumo_corrente + st.session_state.calorie_extra_totali
-bilancio = fabbisogno_corrente - consumo_finale_calcolato
+# --- CRUSCOTTO MATEMATICO INTERATTIVO A 4 COLONNE ---
+st.markdown("<h3 style='text-align: center;'>Quadro Energetico Generale</h3>", unsafe_allow_html=True)
 
-# Cruscotto principale racchiuso in un riquadro evidenziato
-st.markdown("<div style='border: 1px solid #444; padding: 20px; border-radius: 10px; background-color: #1a1a1a;'>", unsafe_allow_html=True)
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.metric(label="Fabbisogno", value=f"{fabbisogno_corrente} Kcal")
-with col2:
-    st.metric(label="Consumo Totale", value=f"{consumo_finale_calcolato} Kcal")
-with col3:
-    if bilancio < 0:
-        st.metric(label="Risultato", value=f"Deficit {bilancio} Kcal")
-    else:
-        st.metric(label="Risultato", value=f"+{bilancio} Kcal")
-st.markdown("</div>", unsafe_allow_html=True)
+# Intestazione Colonne
+c_head1, c_head2, c_head3, c_head4 = st.columns(4)
+c_head1.markdown("**Fabbisogno**")
+c_head2.markdown("**Consumo Stimato**")
+c_head3.markdown("**Calorie Pasti**")
+c_head4.markdown("**Deficit**")
+
+# Riga 1: Giorno Workout
+c_w1, c_w2, c_w3, c_w4 = st.columns(4)
+c_w1.markdown(f"<div style='padding:8px; background-color:{'#1E3A1E' if giorno_workout else '#222'}; border-radius:5px;'>WO: {pt_kcal_wo} Kcal</div>", unsafe_allow_html=True)
+c_w2.markdown(f"<div style='padding:8px; background-color:{'#1E3A1E' if giorno_workout else '#222'}; border-radius:5px;'>{spesa_prevista_wo} Kcal</div>", unsafe_allow_html=True)
+c_w3.markdown(f"<div style='padding:8px; background-color:{'#1E3A1E' if giorno_workout else '#222'}; border-radius:5px;'>{round(st.session_state.cal_generate_wo)} Kcal</div>", unsafe_allow_html=True)
+c_w4.markdown(f"<div style='padding:8px; background-color:{'#1E3A1E' if giorno_workout else '#222'}; border-radius:5px;'>{round(deficit_wo)} Kcal</div>", unsafe_allow_html=True)
+
+# Riga 2: Giorno Rest
+c_r1, c_r2, c_r3, c_r4 = st.columns(4)
+c_r1.markdown(f"<div style='padding:8px; background-color:{'#1E3A1E' if not giorno_workout else '#222'}; border-radius:5px;'>REST: {pt_kcal_rest} Kcal</div>", unsafe_allow_html=True)
+c_r2.markdown(f"<div style='padding:8px; background-color:{'#1E3A1E' if not giorno_workout else '#222'}; border-radius:5px;'>{spesa_prevista_rest} Kcal</div>", unsafe_allow_html=True)
+c_r3.markdown(f"<div style='padding:8px; background-color:{'#1E3A1E' if not giorno_workout else '#222'}; border-radius:5px;'>{round(st.session_state.cal_generate_rest)} Kcal</div>", unsafe_allow_html=True)
+c_r4.markdown(f"<div style='padding:8px; background-color:{'#1E3A1E' if not giorno_workout else '#222'}; border-radius:5px;'>{round(deficit_rest)} Kcal</div>", unsafe_allow_html=True)
 
 st.write("---")
 
@@ -549,10 +574,12 @@ def genera_singolo_pasto(target_p, target_c, target_g):
     gr_p = round((target_p / BANCA_DATI[fonte_p]["P"]) * 100) if BANCA_DATI[fonte_p]["P"] > 0 else 0
     gr_g = round((target_g / BANCA_DATI[fonte_g]["G"]) * 100) if BANCA_DATI[fonte_g]["G"] > 0 else 0
     
+    kcal_totali_pasto = (target_p * 4) + (target_c * 4) + (target_g * 9)
+    
     return [
-        {"alimento": fonte_c, "grammi": gr_c, "macro": f"C: {target_c}g"},
-        {"alimento": fonte_p, "grammi": gr_p, "macro": f"P: {target_p}g"},
-        {"alimento": fonte_g, "grammi": gr_g, "macro": f"G: {target_g}g"}
+        {"alimento": fonte_c, "grammi": gr_c, "macro": f"C: {target_c}g", "kcal": gr_c * (BANCA_DATI[fonte_c]["Kcal"]/100)},
+        {"alimento": fonte_p, "grammi": gr_p, "macro": f"P: {target_p}g", "kcal": gr_p * (BANCA_DATI[fonte_p]["Kcal"]/100)},
+        {"alimento": fonte_g, "grammi": gr_g, "macro": f"G: {target_g}g", "kcal": gr_g * (BANCA_DATI[fonte_g]["Kcal"]/100)}
     ]
 
 st.markdown("<h3 style='text-align: center;'>Pianificazione Alimentare Giornaliera</h3>", unsafe_allow_html=True)
@@ -560,9 +587,20 @@ st.markdown("<h3 style='text-align: center;'>Pianificazione Alimentare Giornalie
 numero_pasti_main = st.slider("Seleziona numero di pasti giornalieri:", min_value=1, max_value=7, value=5, key="pasti_main")
 
 if st.button("Genera Tutti i Pasti", use_container_width=True, type="primary"):
+    st.session_state.pasti_generati = {}
+    totale_kcal_giornaliero = 0.0
+    
     for idx in range(1, numero_pasti_main + 1):
-        target = macro_pasti_personalizzati.get(idx, {"P": 40, "C": 50, "G": 10})
-        st.session_state.pasti_generati[idx] = genera_singolo_pasto(target["P"], target["C"], target["G"])
+        target = macro_selezionati_sistema.get(idx, {"P": 40, "C": 50, "G": 10})
+        pasto_creato = genera_singolo_pasto(target["P"], target["C"], target["G"])
+        st.session_state.pasti_generati[idx] = pasto_creato
+        totale_kcal_giornaliero += sum(ing["kcal"] for ing in pasto_creato)
+    
+    if giorno_workout:
+        st.session_state.cal_generate_wo = totale_kcal_giornaliero
+    else:
+        st.session_state.cal_generate_rest = totale_kcal_giornaliero
+    st.rerun()
 
 for idx in range(1, numero_pasti_main + 1):
     st.markdown(f"#### Pasto {idx}")
@@ -578,7 +616,6 @@ for idx in range(1, numero_pasti_main + 1):
                 st.session_state.extra_temporanei[idx] = []
                 
             st.markdown("<span style='color: #FFB300;'>✨ Pasto Extra</span>", unsafe_allow_html=True)
-            
             search_input = st.text_input("🔍 Cerca alimento extra:", key=f"search_{idx}")
             
             if search_input:
@@ -599,17 +636,24 @@ for idx in range(1, numero_pasti_main + 1):
             
             if st.session_state.extra_temporanei[idx]:
                 st.write("**Elementi inseriti in questo pasto:**")
+                totale_pasto_extra = 0.0
                 for item in st.session_state.extra_temporanei[idx]:
                     st.write(f"• {item['alimento']} ({item['info']}) → **{item['Kcal']} Kcal**")
+                    totale_pasto_extra += item["Kcal"]
                 
                 if st.button("✓ Concludi Pasto ed Aggiorna", key=f"concludi_{idx}", use_container_width=True, type="secondary"):
-                    st.session_state.pasti_generati[idx] = [{"alimento": x["alimento"], "grammi": x["info"], "macro": f"{x['Kcal']} Kcal"} for x in st.session_state.extra_temporanei[idx]]
+                    st.session_state.pasti_generati[idx] = [{"alimento": x["alimento"], "grammi": x["info"], "macro": f"{x['Kcal']} Kcal", "kcal": x["Kcal"]} for x in st.session_state.extra_temporanei[idx]]
                     
-                    totale_temporaneo = 0.0
-                    for p_id, lista_cibi in st.session_state.extra_temporanei.items():
-                        for c in lista_cibi:
-                            totale_temporaneo += c["Kcal"]
-                    st.session_state.calorie_extra_totali = totale_temporaneo
+                    # Ricalcolo totale delle Kcal generate per il giorno attivo
+                    totale_tutti_i_pasti = 0.0
+                    for p_id in range(1, numero_pasti_main + 1):
+                        if p_id in st.session_state.pasti_generati:
+                            totale_tutti_i_pasti += sum(ing.get("kcal", 0.0) for ing in st.session_state.pasti_generati[p_id])
+                    
+                    if giorno_workout:
+                        st.session_state.cal_generate_wo = totale_tutti_i_pasti
+                    else:
+                        st.session_state.cal_generate_rest = totale_tutti_i_pasti
                     st.rerun()
             else:
                 st.info("Digita un alimento sopra per comporre il tuo pasto fuori menù.")
@@ -631,9 +675,21 @@ for idx in range(1, numero_pasti_main + 1):
                     elif riferimento == "Rest":
                         target = {"P": 40, "C": 30, "G": 15}
                     else:
-                        target = macro_pasti_personalizzati.get(idx, {"P": 40, "C": 50, "G": 10})
+                        target = macro_selezionati_sistema.get(idx, {"P": 40, "C": 50, "G": 10})
                         
-                    st.session_state.pasti_generati[idx] = genera_singolo_pasto(target["P"], target["C"], target["G"])
+                    pasto_singolo = genera_singolo_pasto(target["P"], target["C"], target["G"])
+                    st.session_state.pasti_generati[idx] = pasto_singolo
+                    
+                    # Ricalcola al volo
+                    totale_tutti_i_pasti = 0.0
+                    for p_id in range(1, numero_pasti_main + 1):
+                        if p_id in st.session_state.pasti_generati:
+                            totale_tutti_i_pasti += sum(ing.get("kcal", 0.0) for ing in st.session_state.pasti_generati[p_id])
+                    
+                    if giorno_workout:
+                        st.session_state.cal_generate_wo = totale_tutti_i_pasti
+                    else:
+                        st.session_state.cal_generate_rest = totale_tutti_i_pasti
                     st.rerun()
                     
     st.write("---")
