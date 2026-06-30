@@ -127,11 +127,11 @@ for cibo in BANCA_DATI.keys():
 
 st.sidebar.write("---")
 st.sidebar.subheader("Configurazione Avanzata Macro Pasti")
-numero_pasti = st.sidebar.slider("Seleziona numero di pasti:", min_value=1, max_value=7, value=5)
-
+# Massimo configurabile fissato a 7
 macro_pasti_personalizzati = {}
-for i in range(1, numero_pasti + 1):
+for i in range(1, 8):
     with st.sidebar.expander(f"Imposta Macro Pasto {i}"):
+        st.markdown(f"**Pasto {i}**")
         p_pasto = st.number_input(f"Proteine (g) - P{i}", value=40, key=f"p_p_{i}")
         c_pasto = st.number_input(f"Carboidrati (g) - P{i}", value=50, key=f"c_p_{i}")
         g_pasto = st.number_input(f"Grassi (g) - P{i}", value=10, key=f"g_p_{i}")
@@ -285,12 +285,15 @@ def genera_singolo_pasto(target_p, target_c, target_g):
 
 st.markdown("<h3 style='text-align: center;'>Pianificazione Alimentare Giornaliera</h3>", unsafe_allow_html=True)
 
+# BARRA DI SCELTA NUMERO PASTI NELLA SCHERMATA PRINCIPALE
+numero_pasti_main = st.slider("Seleziona numero di pasti giornalieri:", min_value=1, max_value=7, value=5, key="pasti_main")
+
 if st.button("Genera Tutti i Pasti", use_container_width=True, type="primary"):
-    for idx in range(1, numero_pasti + 1):
+    for idx in range(1, numero_pasti_main + 1):
         target = macro_pasti_personalizzati.get(idx, {"P": 40, "C": 50, "G": 10})
         st.session_state.pasti_generati[idx] = genera_singolo_pasto(target["P"], target["C"], target["G"])
 
-for idx in range(1, numero_pasti + 1):
+for idx in range(1, numero_pasti_main + 1):
     st.markdown(f"#### Pasto {idx}")
     
     col_pasto_sx, col_pasto_dx = st.columns([2, 1])
@@ -303,13 +306,14 @@ for idx in range(1, numero_pasti + 1):
             st.info("Pasto non ancora generato.")
             
     with col_pasto_dx:
-        riferimento = st.selectbox("Riferimento", ["Default", "Workout", "Rest", "Extra"], key=f"ref_{idx}", label_visibility="collapsed")
-        if st.button("Rigenera questo", key=f"regen_{idx}", use_container_width=True):
-            if riferimento == "Workout":
+        # RIMOSSA l'opzione 'Default': la tendina mostra solo le variazioni forzate o l'allineamento manuale
+        riferimento = st.selectbox("Forza Cambio", ["Usa Impostazioni", "Forza Workout", "Forza Rest", "Forza Extra"], key=f"ref_{idx}", label_visibility="collapsed")
+        if st.button("Genera solo questo", key=f"regen_{idx}", use_container_width=True):
+            if riferimento == "Forza Workout":
                 target = {"P": 50, "C": 70, "G": 5}
-            elif riferimento == "Rest":
+            elif riferimento == "Forza Rest":
                 target = {"P": 40, "C": 30, "G": 15}
-            elif riferimento == "Extra":
+            elif riferimento == "Forza Extra":
                 target = {"P": 20, "C": 100, "G": 30}
             else:
                 target = macro_pasti_personalizzati.get(idx, {"P": 40, "C": 50, "G": 10})
