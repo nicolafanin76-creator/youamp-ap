@@ -543,6 +543,7 @@ st.markdown(html_tabella, unsafe_allow_html=True)
 st.write("---")
 
 # --- NUOVA SEZIONE: PIANIFICATORE E ASSEGNAZIONE INTEGRATORI NEI PASTI ---
+st.sidebar.write("---")
 st.markdown("<h3 style='text-align: center;'>Pianificatore Integratori Permanenti</h3>", unsafe_allow_html=True)
 
 # Recupera solo gli integratori flaggati come attivi nella Sidebar
@@ -752,42 +753,40 @@ for idx in range(1, numero_pasti_main + 1):
                 
         else:
             if idx in st.session_state.pasti_generati and not any("Kcal" in ing["macro"] for ing in st.session_state.pasti_generati[idx]):
-                # Visualizza alimenti generati puliti
                 for ingrediente in st.session_state.pasti_generati[idx]:
                     if ingrediente['grammi'] > 0:
                         st.write(f"• **{ingrediente['alimento']}**: {ingrediente['grammi']}g ({ingrediente['macro']})")
                 
-                # INTERFACCIA DI CONFERMA SOSTITUZIONE PROTEINE IN POLVERE
                 pasto_ha_cibo_proteico = any(ing["alimento"] in [x for x, y in BANCA_DATI.items() if y["cat"] == "Proteine" and "Polvere" not in x] for ing in st.session_state.pasti_generati[idx])
-                polvere_attiva = integratori_attivi.get("Proteine ISO", False) or integratori_attivi.get("Proteine Whey", False)
                 
-                if pasto_ha_cibo_proteico and polvere_attiva:
-                    tipo_polvere = "Proteine ISO" if integratori_attivi.get("Proteine ISO", False) else "Proteine Whey"
-                    purezza = 0.90 if tipo_polvere == "Proteine ISO" else 0.80
-                    
-                    if st.button(f"🔄 Sostituisci con {tipo_polvere}", key=f"swap_shaker_{idx}"):
-                        target_p_originale = st.session_state.pasti_generati[idx][0]["target_orig"]
-                        grammi_polvere_necessari = round(target_p_originale / purezza)
-                        kcal_shaker = target_p_originale * 4
-                        
-                        # Aggiorniamo la lista del pasto sostituendo la fonte solida con lo shaker
-                        for ing in st.session_state.pasti_generati[idx]:
-                            if BANCA_DATI.get(ing["alimento"], {}).get("cat") == "Proteine":
-                                ing["alimento"] = f"{tipo_polvere} in Polvere"
-                                ing["grammi"] = grammi_polvere_necessari
-                                ing["macro"] = f"P: {target_p_originale}g"
-                                ing["kcal"] = kcal_shaker
-                        
-                        # Ricalcolo istantaneo cruscotto energetico
-                        totale_tutti_i_pasti = 0.0
-                        for p_id in range(1, numero_pasti_main + 1):
-                            if p_id in st.session_state.pasti_generati:
-                                totale_tutti_i_pasti += sum(ing.get("kcal", 0.0) for ing in st.session_state.pasti_generati[p_id])
-                        if giorno_workout:
-                            st.session_state.cal_generate_wo = totale_tutti_i_pasti
-                        else:
-                            st.session_state.cal_generate_rest = totale_tutti_i_pasti
-                        st.rerun()
+                if pasto_ha_cibo_proteico:
+                    col_pasto_dx_btn = st.columns([1,1])
+                    with col_pasto_dx_btn[0]:
+                        riferimento_shk = st.selectbox("Cambia in Shake", ["Scegli Integratore", "Proteine ISO", "Proteine Whey"], key=f"shk_ref_{idx}", label_visibility="collapsed")
+                    with col_pasto_dx_btn[1]:
+                        if st.button("🥤 Sostituisci", key=f"swap_shaker_{idx}"):
+                            if riferimento_shk != "Scegli Integratore":
+                                purezza = 0.90 if riferimento_shk == "Proteine ISO" else 0.80
+                                target_p_originale = st.session_state.pasti_generati[idx][0]["target_orig"]
+                                grammi_polvere_necessari = round(target_p_originale / purezza)
+                                kcal_shaker = target_p_originale * 4
+                                
+                                for ing in st.session_state.pasti_generati[idx]:
+                                    if BANCA_DATI.get(ing["alimento"], {}).get("cat") == "Proteine":
+                                        ing["alimento"] = f"{riferimento_shk} in Polvere"
+                                        ing["grammi"] = grammi_polvere_necessari
+                                        ing["macro"] = f"P: {target_p_originale}g"
+                                        ing["kcal"] = kcal_shaker
+                                
+                                totale_tutti_i_pasti = 0.0
+                                for p_id in range(1, numero_pasti_main + 1):
+                                    if p_id in st.session_state.pasti_generati:
+                                        totale_tutti_i_pasti += sum(ing.get("kcal", 0.0) for ing in st.session_state.pasti_generati[p_id])
+                                if giorno_workout:
+                                    st.session_state.cal_generate_wo = totale_tutti_i_pasti
+                                else:
+                                    st.session_state.cal_generate_rest = totale_tutti_i_pasti
+                                st.rerun()
 
             elif idx in st.session_state.pasti_generati:
                 for ingrediente in st.session_state.pasti_generati[idx]:
@@ -795,7 +794,6 @@ for idx in range(1, numero_pasti_main + 1):
             else:
                 st.info("Pasto non ancora generato.")
             
-            # STAMPA AUTOMATICA INTEGRATORI PERMANENTI ABBINATI A QUESTO PASTO
             if idx in st.session_state.piani_integratori and st.session_state.piani_integratori[idx]:
                 st.markdown("<span style='color: #00D26A; font-size:13px;'>💊 Integratori da assumere:</span>", unsafe_allow_html=True)
                 for integratore in st.session_state.piani_integratori[idx]:
