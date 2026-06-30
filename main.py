@@ -214,7 +214,7 @@ with col_w_btn[4]:
 
 st.write("---")
 
-# Sezione Fisico con diciture accorciate per non tagliare lo schermo dello smartphone
+# Sezione Fisico con diciture accorciate e reinserimento completo simmetrie
 st.markdown("<h3 style='text-align: center;'>Composizione Corporea</h3>", unsafe_allow_html=True)
 tab1, tab2 = st.tabs(["Plicometria", "Circonferenze"])
 
@@ -244,14 +244,22 @@ with tab1:
 with tab2:
     col_c1, col_c2 = st.columns(2)
     with col_c1:
+        st.markdown("**Centro Corpo**")
         c_collo = st.number_input("Collo (cm)", value=41.0)
         c_spalle = st.number_input("Spalle (cm)", value=128.0)
         c_petto = st.number_input("Petto (cm)", value=112.0)
         c_vita = st.number_input("Vita (cm)", value=86.0)
+        c_fianchi = st.number_input("Fianchi (cm)", value=98.0)
     with col_c2:
+        st.markdown("**Simmetria Arti (DX vs SX)**")
         c_bicipite_dx = st.number_input("Bicipite DX (cm)", value=42.0)
+        c_bicipite_sx = st.number_input("Bicipite SX (cm)", value=41.5)
+        c_avambraccio_dx = st.number_input("Avambraccio DX (cm)", value=34.0)
+        c_avambraccio_sx = st.number_input("Avambraccio SX (cm)", value=33.8)
         c_coscia_dx = st.number_input("Coscia DX (cm)", value=62.0)
+        c_coscia_sx = st.number_input("Coscia SX (cm)", value=61.2)
         c_polpaccio_dx = st.number_input("Polpaccio DX (cm)", value=40.0)
+        c_polpaccio_sx = st.number_input("Polpaccio SX (cm)", value=40.0)
 
 st.write("---")
 
@@ -277,13 +285,11 @@ def genera_singolo_pasto(target_p, target_c, target_g):
 
 st.markdown("<h3 style='text-align: center;'>Pianificazione Alimentare Giornaliera</h3>", unsafe_allow_html=True)
 
-# Tasto di generazione globale per tutti i pasti impostati
 if st.button("Genera Tutti i Pasti", use_container_width=True, type="primary"):
     for idx in range(1, numero_pasti + 1):
         target = macro_pasti_personalizzati.get(idx, {"P": 40, "C": 50, "G": 10})
         st.session_state.pasti_generati[idx] = genera_singolo_pasto(target["P"], target["C"], target["G"])
 
-# Rendering dinamico e controllo dei singoli pasti
 for idx in range(1, numero_pasti + 1):
     st.markdown(f"#### Pasto {idx}")
     
@@ -300,11 +306,11 @@ for idx in range(1, numero_pasti + 1):
         riferimento = st.selectbox("Riferimento", ["Default", "Workout", "Rest", "Extra"], key=f"ref_{idx}", label_visibility="collapsed")
         if st.button("Rigenera questo", key=f"regen_{idx}", use_container_width=True):
             if riferimento == "Workout":
-                target = {"P": 50, "C": 70, "G": 5} # Valori teorici forzati WO
+                target = {"P": 50, "C": 70, "G": 5}
             elif riferimento == "Rest":
-                target = {"P": 40, "C": 30, "G": 15} # Valori teorici forzati REST
+                target = {"P": 40, "C": 30, "G": 15}
             elif riferimento == "Extra":
-                target = {"P": 20, "C": 100, "G": 30} # Valori teorici Extra
+                target = {"P": 20, "C": 100, "G": 30}
             else:
                 target = macro_pasti_personalizzati.get(idx, {"P": 40, "C": 50, "G": 10})
                 
