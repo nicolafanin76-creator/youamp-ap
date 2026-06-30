@@ -188,22 +188,122 @@ BANCA_DATI = {
     "Dolcificante": {"P": 0.0, "C": 0.0, "G": 0.0, "Kcal": 0, "cat": "Dolcificanti", "sub": "Zuccheri Fit"}
 }
 
-# BANCA DATI COMPLETA EXTRA PORZIONI MEDIE PRECALCOLATE
+# BANCA DATI EXTRA COMPLETA AGGIORNATA CON TUTTI I NUOVI PIATTI RICHIESTI
 BANCA_DATI_EXTRA_SORGENTE = {
+    # --- PIZZE & PINSE ---
     "Pizza Margherita": {"Kcal": 700, "info": "1 Porzione Media"},
     "Pizza Farcita": {"Kcal": 950, "info": "1 Porzione Media"},
+    "Pizza Fritta": {"Kcal": 1100, "info": "1 Pezzo Standard"},
+    "Pinsa Farcita": {"Kcal": 750, "info": "1 Porzione Media"},
+
+    # --- PRIMI PIATTI ---
+    "Pasta alla Carbonara": {"Kcal": 850, "info": "1 Piatto Ristorante"},
+    "Pasta al Ragù": {"Kcal": 650, "info": "1 Piatto Ristorante"},
+    "Pasta al Pesto": {"Kcal": 600, "info": "1 Piatto Ristorante"},
+    "Pasta al Burro": {"Kcal": 480, "info": "1 Piatto Ristorante"},
+    "Pasta all'Olio": {"Kcal": 450, "info": "1 Piatto Ristorante"},
+    "Pasta al Tonno": {"Kcal": 580, "info": "1 Piatto Ristorante"},
+    "Pasta Fresca Condita": {"Kcal": 700, "info": "1 Piatto Ristorante"},
+    "Lasagne": {"Kcal": 800, "info": "1 Porzione Ristorante"},
+    "Pasta all'Amatriciana": {"Kcal": 750, "info": "1 Piatto Ristorante"},
+    "Risotto (Condito)": {"Kcal": 600, "info": "1 Piatto Ristorante"},
+    "Insalata di Riso": {"Kcal": 550, "info": "1 Porzione Media"},
+    "Tortellini in Brodo": {"Kcal": 420, "info": "1 Piatto Ristorante"},
+    "Tortellini Panna e Prosciutto": {"Kcal": 780, "info": "1 Piatto Ristorante"},
+    "Gnocchi ai Formaggi": {"Kcal": 820, "info": "1 Piatto Ristorante"},
+    "Tortellini Ripieni": {"Kcal": 500, "info": "1 Porzione Standard"},
+
+    # --- PANE, PIADINE & SNACK ---
+    "Pane all'Olio": {"Kcal": 310, "info": "100g standard"},
+    "Grissini": {"Kcal": 410, "info": "100g standard"},
+    "Taralli": {"Kcal": 460, "info": "100g standard"},
+    "Piadina Farcita": {"Kcal": 700, "info": "1 Porzione Standard"},
+    "Panino Fastfood": {"Kcal": 650, "info": "1 Singolo Hamburgher Completo"},
+
+    # --- SECONDI DI CARNE ---
+    "Carne di Maiale alla Griglia": {"Kcal": 450, "info": "1 Porzione Standard"},
+    "Carne alla Griglia Mista": {"Kcal": 750, "info": "1 Porzione Ristorante"},
+    "Tagliata": {"Kcal": 420, "info": "1 Porzione 250g"},
+    "Affettati di Maiale": {"Kcal": 320, "info": "1 Tagliere misto 100g"},
+    "Formaggi": {"Kcal": 380, "info": "1 Porzione Mista 100g"},
+    "Spezzatino": {"Kcal": 520, "info": "1 Porzione Standard"},
+    "Polenta": {"Kcal": 250, "info": "1 Porzione Standard 150g"},
+    "Coniglio Arrosto": {"Kcal": 380, "info": "1 Porzione Standard"},
+    "Arrosto di Maiale": {"Kcal": 410, "info": "1 Porzione Standard"},
+    "Arrosto di Vitello": {"Kcal": 350, "info": "1 Porzione Standard"},
+    "Caprese": {"Kcal": 320, "info": "1 Porzione Standard"},
+    "Ragù d'Anitra": {"Kcal": 350, "info": "1 Porzione da Condimento"},
+    "Trippa": {"Kcal": 280, "info": "1 Porzione Ristorante"},
+    "Cotechino": {"Kcal": 450, "info": "1 Porzione 100g"},
+    "Carne Bollita di Manzo": {"Kcal": 310, "info": "1 Porzione Standard"},
+    "Carne Bollita di Pollo": {"Kcal": 220, "info": "1 Porzione Standard"},
+    "Cappone": {"Kcal": 340, "info": "1 Porzione Standard"},
+    "Scaloppa ai Funghi": {"Kcal": 420, "info": "1 Porzione Standard"},
+    "Scaloppa al Limone": {"Kcal": 380, "info": "1 Porzione Standard"},
+    "Scaloppa alle Verdure": {"Kcal": 390, "info": "1 Porzione Standard"},
+    "Cotoletta": {"Kcal": 550, "info": "1 Pezzo Standard"},
+    "Wurstell": {"Kcal": 270, "info": "1 Porzione 100g"},
+    "Filetto Lardellato": {"Kcal": 480, "info": "1 Porzione Standard"},
+    "Anatra al Forno": {"Kcal": 460, "info": "1 Porzione Standard"},
+
+    # --- FRITTI & CONTORNI ---
+    "Mozzarella in Carrozza": {"Kcal": 480, "info": "1 Pezzo Grande"},
+    "Mozzarelline Fritte": {"Kcal": 340, "info": "1 Porzione 6 pezzi"},
+    "Crocchette di Patate": {"Kcal": 280, "info": "1 Porzione 3 pezzi"},
+    "Patate al Forno": {"Kcal": 220, "info": "1 Porzione Media"},
+    "Patatine Fritte": {"Kcal": 320, "info": "1 Porzione Media"},
+
+    # --- SECONDI DI PESCE ---
+    "Baccalà Mantecato": {"Kcal": 350, "info": "1 Porzione 100g"},
+    "Baccalà alla Vicentina": {"Kcal": 490, "info": "1 Porzione Ristorante"},
+    "Polpo": {"Kcal": 180, "info": "1 Porzione Standard Insalata"},
+    "Seppia": {"Kcal": 200, "info": "1 Porzione Umido/Griglia"},
+    "Spaghetti allo Scoglio": {"Kcal": 650, "info": "1 Piatto Ristorante"},
+    "Spaghetti alle Cozze": {"Kcal": 580, "info": "1 Piatto Ristorante"},
     "Spaghetti alle Vongole": {"Kcal": 550, "info": "1 Piatto Ristorante"},
     "Frittura Mista di Pesce": {"Kcal": 600, "info": "1 Porzione Media"},
-    "Birra Chiara": {"Kcal": 140, "info": "1 Bicchiere 33cl"},
-    "Birra Doppio Malto": {"Kcal": 220, "info": "1 Bicchiere 33cl"},
+    "Risotto Nero di Seppia": {"Kcal": 590, "info": "1 Piatto Ristorante"},
+    "Risotto di Pesce": {"Kcal": 610, "info": "1 Piatto Ristorante"},
+    "Scampi": {"Kcal": 120, "info": "1 Porzione Griglia 150g"},
+    "Gamberoni": {"Kcal": 140, "info": "1 Porzione Griglia 150g"},
+    "Totani": {"Kcal": 220, "info": "1 Porzione Umido/Griglia"},
+    "Mazzancolle": {"Kcal": 130, "info": "1 Porzione Standard"},
+    "Capasanta Gratinata": {"Kcal": 180, "info": "2 Pezzi"},
+
+    # --- COLAZIONE & BAR ---
+    "Croissant Integrale": {"Kcal": 260, "info": "1 Pezzo Standard"},
+    "Croissant Farcito": {"Kcal": 360, "info": "1 Pezzo Standard"},
+    "Cappuccino": {"Kcal": 110, "info": "1 Tazza Standard Intero"},
+    "Cioccolata Calda": {"Kcal": 280, "info": "1 Tazza Standard"},
+    "Krapfen Farcito": {"Kcal": 420, "info": "1 Pezzo Grande"},
+    "Frittelle": {"Kcal": 290, "info": "1 Porzione 100g"},
+    "Frittelle Farcite": {"Kcal": 390, "info": "1 Porzione 100g"},
+
+    # --- PASTICCERIA & DOLCI ---
     "Gelato Artigianale": {"Kcal": 250, "info": "1 Coppetta Media"},
-    "Gin Tonic": {"Kcal": 170, "info": "1 Bicchiere Standard"},
-    "Spritz": {"Kcal": 120, "info": "1 Bicchiere Standard"},
-    "Calice di Prosecco": {"Kcal": 90, "info": "1 Calice Standard"},
+    "Cheesecake": {"Kcal": 450, "info": "1 Fetta Standard"},
+    "Tiramisù": {"Kcal": 480, "info": "1 Porzione Standard"},
+    "Torta di Frutta": {"Kcal": 350, "info": "1 Fetta Standard"},
+    "Meringata": {"Kcal": 400, "info": "1 Fetta Standard"},
+    "Sorbetto": {"Kcal": 150, "info": "1 Bicchiere"},
     "Sorbetto al Limone": {"Kcal": 150, "info": "1 Bicchiere"},
-    "Patatine Fritte": {"Kcal": 320, "info": "1 Porzione Media"},
-    "Kebab Completo": {"Kcal": 850, "info": "1 Piadina intera"},
-    "Cornetto alla Crema": {"Kcal": 300, "info": "1 Pezzo da Bar"}
+    "Panettone": {"Kcal": 370, "info": "1 Fetta 100g"},
+    "Pandoro": {"Kcal": 410, "info": "1 Fetta 100g"},
+    "Torta di Mele": {"Kcal": 320, "info": "1 Fetta Standard"},
+    "Millefoglie": {"Kcal": 460, "info": "1 Fetta Standard"},
+
+    # --- ALCOLICI & BEVANDE ---
+    "Bibita Gassata Dolce": {"Kcal": 130, "info": "1 Lattina 33cl"},
+    "The Zuccherati": {"Kcal": 110, "info": "1 Bicchiere/Lattina"},
+    "Gin Tonic": {"Kcal": 170, "info": "1 Bicchiere Standard"},
+    "Spritz Aperol": {"Kcal": 140, "info": "1 Bicchiere Standard"},
+    "Spritz": {"Kcal": 120, "info": "1 Bicchiere Standard"},
+    "Prosecco": {"Kcal": 90, "info": "1 Calice Standard"},
+    "Calice di Prosecco": {"Kcal": 90, "info": "1 Calice Standard"},
+    "Vino Rosso": {"Kcal": 100, "info": "1 Calice Standard"},
+    "Vino Bianco": {"Kcal": 95, "info": "1 Calice Standard"},
+    "Vodka": {"Kcal": 115, "info": "1 Shot 50ml"},
+    "Mojito": {"Kcal": 180, "info": "1 Bicchiere Standard"}
 }
 
 # --- INTERFACCIA SINISTRA: SIDEBAR ---
