@@ -126,7 +126,7 @@ BANCA_DATI = {
     "Olio Extra Vergine d'Oliva": {"P": 0.0, "C": 0.0, "G": 99.0, "Kcal": 899, "cat": "Grassi", "sub": "Condimenti"},
     "Noci": {"P": 16.0, "C": 5.5, "G": 65.0, "Kcal": 654, "cat": "Grassi", "sub": "Frutta Secca"},
     "Mandorle": {"P": 22.0, "C": 4.6, "G": 50.0, "Kcal": 579, "cat": "Grassi", "sub": "Frutta Secca"},
-    "Cioccolato Fondente": {"P": 5.0, "C": 50.0, "G": 32.0, "Kcal": 515, "cat": "Grassi", "sub": "Sgarri e Dolci Fit"},
+    "Cioccolato Fondente": {"P": 5.0, "C": 50.0, "G": 32.0, "Kcal": 515, "cat": "Grassi", "sub": "Cioccolato e Creme"},
     "Burro d'Arachidi": {"P": 25.0, "C": 20.0, "G": 50.0, "Kcal": 588, "cat": "Grassi", "sub": "Burri e Creme"},
     "Crema di Mandorle": {"P": 21.0, "C": 19.0, "G": 55.0, "Kcal": 614, "cat": "Grassi", "sub": "Burri e Creme"},
     "Hummus": {"P": 5.0, "C": 14.0, "G": 9.0, "Kcal": 166, "cat": "Grassi", "sub": "Salse Fit"},
@@ -180,9 +180,12 @@ BANCA_DATI = {
     "Albicocche": {"P": 1.4, "C": 11.0, "G": 0.4, "Kcal": 48, "cat": "Frutta", "sub": "Frutta Standard"},
     "Ciliege": {"P": 1.0, "C": 16.0, "G": 0.2, "Kcal": 50, "cat": "Frutta", "sub": "Frutta Standard"},
     "Mela": {"P": 0.3, "C": 14.0, "G": 0.2, "Kcal": 52, "cat": "Frutta", "sub": "Frutta Standard"},
-    
-    # --- BEVANDE & SUCCHI ---
-    "Succo d'Arancia": {"P": 0.7, "C": 10.0, "G": 0.2, "Kcal": 45, "cat": "Frutta", "sub": "Succhi e Bevande"}
+    "Succo d'Arancia": {"P": 0.7, "C": 10.0, "G": 0.2, "Kcal": 45, "cat": "Frutta", "sub": "Succhi e Bevande"},
+
+    # --- DOLCIFICANTI ---
+    "Miele": {"P": 0.6, "C": 80.0, "G": 0.0, "Kcal": 322, "cat": "Dolcificanti", "sub": "Zuccheri Fit"},
+    "Stevia": {"P": 0.0, "C": 0.0, "G": 0.0, "Kcal": 0, "cat": "Dolcificanti", "sub": "Zuccheri Fit"},
+    "Dolcificante": {"P": 0.0, "C": 0.0, "G": 0.0, "Kcal": 0, "cat": "Dolcificanti", "sub": "Zuccheri Fit"}
 }
 
 # BANCA DATI COMPLETA EXTRA PORZIONI MEDIE PRECALCOLATE
@@ -237,7 +240,7 @@ target_acqua_manuale = st.sidebar.number_input("Indicazione Acqua (Litri)", valu
 st.sidebar.write("---")
 st.sidebar.subheader("Dispensa Alimenti")
 dispensa_attiva = {}
-categorie_lista = ["Carboidrati", "Proteine", "Grassi", "Verdura", "Frutta"]
+categorie_lista = ["Carboidrati", "Proteine", "Grassi", "Verdura", "Frutta", "Dolcificanti"]
 
 for categoria in categorie_lista:
     with st.sidebar.expander(categoria.upper()):
@@ -247,7 +250,7 @@ for categoria in categorie_lista:
             st.markdown(f"**-- {sub} --**")
             cibi_in_sub = {k: v for k, v in cibi_in_cat.items() if v["sub"] == sub}
             for cibo in cibi_in_sub.keys():
-                default_val = cibo in ["Riso Basmati", "Petto di Pollo", "Albume d'Uovo", "Olio Extra Vergine d'Oliva", "Zucchine", "Mela"]
+                default_val = cibo in ["Riso Basmati", "Petto di Pollo", "Albume d'Uovo", "Olio Extra Vergine d'Oliva", "Zucchine", "Mela", "Stevia"]
                 dispensa_attiva[cibo] = st.checkbox(cibo, value=default_val, key=f"disp_{cibo}")
 
 st.sidebar.write("---")
