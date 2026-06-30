@@ -92,7 +92,7 @@ BANCA_DATI = {
     "Mela": {"P": 0.3, "C": 14.0, "G": 0.2, "Kcal": 52, "cat": "Frutta"}
 }
 
-# NUOVA DISPENSA EXTRA - PORZIONI MEDIE PRECALCOLATE PER VELOCITÀ DI INSERIMENTO
+# BANCA DATI COMPLETA EXTRA PORZIONI MEDIE PRECALCOLATE
 DISPENSA_EXTRA = {
     "Pizza Margherita": {"Kcal": 700, "info": "1 Porzione Media"},
     "Pizza Farcita": {"Kcal": 950, "info": "1 Porzione Media"},
@@ -181,7 +181,7 @@ else:
 # Scritta del giorno monumentale centrata
 st.markdown(f"<h2 style='text-align: center; letter-spacing: 2px; color: #00D26A;'>{regime_testo}</h2>", unsafe_allow_html=True)
 
-# INTEGRAZIONE DINAMICA EXTRA DA MEZZANOTTE A MEZZANOTTE SULLE CALORIE TOTALI
+# Calcolo Bilancio Energetico e integrazione extra
 consumo_finale_calcolato = consumo_corrente + st.session_state.calorie_extra_totali
 bilancio = fabbisogno_corrente - consumo_finale_calcolato
 
@@ -201,7 +201,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 st.write("---")
 
-# Inserimento Dati Giornalieri Manuali ordinati
+# Inserimento Dati Giornalieri Manuali
 col_input1, col_input2, col_input3 = st.columns(3)
 with col_input1:
     peso_corrente = st.number_input("Peso di Oggi (Kg)", value=91.6, step=0.1)
@@ -233,7 +233,7 @@ with col_w_btn[4]:
 
 st.write("---")
 
-# Sezione Fisico con diciture accorciate e simmetrie complete
+# Sezione Fisico
 st.markdown("<h3 style='text-align: center;'>Composizione Corporea</h3>", unsafe_allow_html=True)
 tab1, tab2 = st.tabs(["Plicometria", "Circonferenze"])
 
@@ -304,7 +304,6 @@ def genera_singolo_pasto(target_p, target_c, target_g):
 
 st.markdown("<h3 style='text-align: center;'>Pianificazione Alimentare Giornaliera</h3>", unsafe_allow_html=True)
 
-# Barra di scelta numero pasti principale centrale
 numero_pasti_main = st.slider("Seleziona numero di pasti giornalieri:", min_value=1, max_value=7, value=5, key="pasti_main")
 
 if st.button("Genera Tutti i Pasti", use_container_width=True, type="primary"):
@@ -312,29 +311,25 @@ if st.button("Genera Tutti i Pasti", use_container_width=True, type="primary"):
         target = macro_pasti_personalizzati.get(idx, {"P": 40, "C": 50, "G": 10})
         st.session_state.pasti_generati[idx] = genera_singolo_pasto(target["P"], target["C"], target["G"])
 
-# Rendering ciclico dei pasti da 1 a 7
 for idx in range(1, numero_pasti_main + 1):
     st.markdown(f"#### Pasto {idx}")
     
     col_pasto_sx, col_pasto_dx = st.columns([2, 1])
     
-    # Rimozione parola 'Forza': la tendina ha solo Workout, Rest, Extra
     with col_pasto_dx:
         riferimento = st.selectbox("Seleziona Tipo", ["Usa Impostazioni", "Workout", "Rest", "Extra"], key=f"ref_{idx}", label_visibility="collapsed")
     
     with col_pasto_sx:
         if riferimento == "Extra":
-            # Inizializza la lista di cibo per questo pasto extra se non esiste
             if idx not in st.session_state.extra_temporanei:
                 st.session_state.extra_temporanei[idx] = []
                 
-            st.markdown("<span style='color: #FFB300;'>✨ Diario Pasto Extra Libero</span>", unsafe_allow_html=True)
+            # TESTO SOSTITUITO CON "Pasto Extra" COME RICHIESTO
+            st.markdown("<span style='color: #FFB300;'>✨ Pasto Extra</span>", unsafe_allow_html=True)
             
-            # Barra di ricerca con autocompletamento intelligente
-            search_input = st.text_input("🔍 Cerca alimento extra (es: pizza, birra, spritz...):", key=f"search_{idx}")
+            search_input = st.text_input("🔍 Cerca alimento extra:", key=f"search_{idx}")
             
             if search_input:
-                # Filtra le chiavi della dispensa extra in base a quello che l'utente sta scrivendo
                 suggerimenti = [chiave for chiave in DISPENSA_EXTRA.keys() if search_input.lower() in chiave.lower()]
                 
                 if suggerimenti:
@@ -350,20 +345,14 @@ for idx in range(1, numero_pasti_main + 1):
                 else:
                     st.warning("Nessun alimento trovato nella dispensa extra.")
             
-            # Mostra gli alimenti attualmente aggiunti a questo pasto extra
             if st.session_state.extra_temporanei[idx]:
                 st.write("**Elementi inseriti in questo pasto:**")
-                calorico_pasto_corrente = 0
                 for item in st.session_state.extra_temporanei[idx]:
                     st.write(f"• {item['alimento']} ({item['info']}) → **{item['Kcal']} Kcal**")
-                    calorico_pasto_corrente += item["Kcal"]
                 
-                # Pulsante di conclusione pasto che va a ricalcolare il database globale delle calorie
                 if st.button("✓ Concludi Pasto ed Aggiorna", key=f"concludi_{idx}", use_container_width=True, type="secondary"):
-                    # Salviamo il riepilogo testuale da visualizzare
                     st.session_state.pasti_generati[idx] = [{"alimento": x["alimento"], "grammi": x["info"], "macro": f"{x['Kcal']} Kcal"} for x in st.session_state.extra_temporanei[idx]]
                     
-                    # Ricalcolo globale di tutti i pasti contrassegnati come extra per aggiornare l'App Salute interna
                     totale_temporaneo = 0.0
                     for p_id, lista_cibi in st.session_state.extra_temporanei.items():
                         for c in lista_cibi:
@@ -374,12 +363,10 @@ for idx in range(1, numero_pasti_main + 1):
                 st.info("Digita un alimento sopra per comporre il tuo pasto fuori menù.")
                 
         else:
-            # Flusso standard per Workout e Rest
             if idx in st.session_state.pasti_generati and not any("Kcal" in ing["macro"] for ing in st.session_state.pasti_generati[idx]):
                 for ingrediente in st.session_state.pasti_generati[idx]:
                     st.write(f"• **{ingrediente['alimento']}**: {ingrediente['grammi']}g ({ingrediente['macro']})")
             elif idx in st.session_state.pasti_generati:
-                # Se è stato concluso come Extra, mostra il riepilogo salvato
                 for ingrediente in st.session_state.pasti_generati[idx]:
                     st.write(f"• **{ingrediente['alimento']}** ({ingrediente['grammi']}) → {ingrediente['macro']}")
             else:
