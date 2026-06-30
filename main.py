@@ -68,43 +68,46 @@ if "calorie_extra_totali" not in st.session_state:
 
 # BANCA DATI COMPLETA DI TUTTI GLI ALIMENTI GENERICI ITALIANI
 BANCA_DATI = {
-    "Riso Basmati": {"P": 8.0, "C": 78.0, "G": 0.8, "Kcal": 350, "cat": "Carboidrati"},
-    "Riso Integrale": {"P": 7.5, "C": 73.0, "G": 1.9, "Kcal": 341, "cat": "Carboidrati"},
-    "Pasta di Semola": {"P": 12.5, "C": 71.3, "G": 1.5, "Kcal": 354, "cat": "Carboidrati"},
-    "Pasta Integrale": {"P": 13.0, "C": 65.0, "G": 2.0, "Kcal": 330, "cat": "Carboidrati"},
-    "Cuscus": {"P": 12.8, "C": 72.4, "G": 0.6, "Kcal": 356, "cat": "Carboidrati"},
-    "Fiocchi d'Avena": {"P": 11.0, "C": 60.0, "G": 8.0, "Kcal": 366, "cat": "Carboidrati"},
-    "Gallette di Riso": {"P": 7.9, "C": 81.5, "G": 1.1, "Kcal": 371, "cat": "Carboidrati"},
-    "Patate": {"P": 2.1, "C": 17.9, "G": 0.1, "Kcal": 80, "cat": "Carboidrati"},
-    "Petto di Pollo": {"P": 23.0, "C": 0.0, "G": 0.8, "Kcal": 100, "cat": "Proteine"},
-    "Fesa di Tacchino": {"P": 24.0, "C": 0.0, "G": 1.2, "Kcal": 107, "cat": "Proteine"},
-    "Filetto di Manzo": {"P": 20.5, "C": 0.0, "G": 3.5, "Kcal": 114, "cat": "Proteine"},
-    "Merluzzo / Nasello": {"P": 17.0, "C": 0.0, "G": 0.3, "Kcal": 71, "cat": "Proteine"},
-    "Salmone": {"P": 20.0, "C": 0.0, "G": 13.0, "Kcal": 197, "cat": "Proteine"},
-    "Tonno al Naturale": {"P": 25.0, "C": 0.0, "G": 0.5, "Kcal": 104, "cat": "Proteine"},
-    "Albume d'Uovo": {"P": 11.0, "C": 0.7, "G": 0.2, "Kcal": 52, "cat": "Proteine"},
-    "Uovo Intero": {"P": 12.4, "C": 0.0, "G": 8.7, "Kcal": 128, "cat": "Proteine"},
-    "Yogurt Greco 0%": {"P": 10.3, "C": 3.0, "G": 0.0, "Kcal": 53, "cat": "Proteine"},
-    "Olio Extra Vergine d'Oliva": {"P": 0.0, "C": 0.0, "G": 99.0, "Kcal": 899, "cat": "Grassi"},
-    "Mandorle": {"P": 22.0, "C": 4.6, "G": 50.0, "Kcal": 579, "cat": "Grassi"},
-    "Zucchine": {"P": 1.3, "C": 1.4, "G": 0.1, "Kcal": 11, "cat": "Verdura"},
-    "Spinaci": {"P": 3.4, "C": 0.6, "G": 0.7, "Kcal": 23, "cat": "Verdura"},
-    "Mela": {"P": 0.3, "C": 14.0, "G": 0.2, "Kcal": 52, "cat": "Frutta"}
+    "Riso Basmati": {"P": 8.0, "C": 78.0, "G": 0.8, "Kcal": 350, "cat": "Carboidrati", "sub": "Riso e Cereali"},
+    "Riso Integrale": {"P": 7.5, "C": 73.0, "G": 1.9, "Kcal": 341, "cat": "Carboidrati", "sub": "Riso e Cereali"},
+    "Pasta di Semola": {"P": 12.5, "C": 71.3, "G": 1.5, "Kcal": 354, "cat": "Carboidrati", "sub": "Pasta"},
+    "Pasta Integrale": {"P": 13.0, "C": 65.0, "G": 2.0, "Kcal": 330, "cat": "Carboidrati", "sub": "Pasta"},
+    "Cuscus": {"P": 12.8, "C": 72.4, "G": 0.6, "Kcal": 356, "cat": "Carboidrati", "sub": "Riso e Cereali"},
+    "Fiocchi d'Avena": {"P": 11.0, "C": 60.0, "G": 8.0, "Kcal": 366, "cat": "Carboidrati", "sub": "Cereali Colazione"},
+    "Gallette di Riso": {"P": 7.9, "C": 81.5, "G": 1.1, "Kcal": 371, "cat": "Carboidrati", "sub": "Pane e Sostituti"},
+    "Patate": {"P": 2.1, "C": 17.9, "G": 0.1, "Kcal": 80, "cat": "Carboidrati", "sub": "Tuberi"},
+    "Petto di Pollo": {"P": 23.0, "C": 0.0, "G": 0.8, "Kcal": 100, "cat": "Proteine", "sub": "Carne Bianca"},
+    "Fesa di Tacchino": {"P": 24.0, "C": 0.0, "G": 1.2, "Kcal": 107, "cat": "Proteine", "sub": "Carne Bianca"},
+    "Filetto di Manzo": {"P": 20.5, "C": 0.0, "G": 3.5, "Kcal": 114, "cat": "Proteine", "sub": "Carne Rossa"},
+    "Merluzzo / Nasello": {"P": 17.0, "C": 0.0, "G": 0.3, "Kcal": 71, "cat": "Proteine", "sub": "Pesce Bianco"},
+    "Salmone": {"P": 20.0, "C": 0.0, "G": 13.0, "Kcal": 197, "cat": "Proteine", "sub": "Pesce Grasso"},
+    "Tonno al Naturale": {"P": 25.0, "C": 0.0, "G": 0.5, "Kcal": 104, "cat": "Proteine", "sub": "Pesce in Scatola"},
+    "Albume d'Uovo": {"P": 11.0, "C": 0.7, "G": 0.2, "Kcal": 52, "cat": "Proteine", "sub": "Uova"},
+    "Uovo Intero": {"P": 12.4, "C": 0.0, "G": 8.7, "Kcal": 128, "cat": "Proteine", "sub": "Uova"},
+    "Yogurt Greco 0%": {"P": 10.3, "C": 3.0, "G": 0.0, "Kcal": 53, "cat": "Proteine", "sub": "Latticini Fit"},
+    "Olio Extra Vergine d'Oliva": {"P": 0.0, "C": 0.0, "G": 99.0, "Kcal": 899, "cat": "Grassi", "sub": "Condimenti"},
+    "Mandorle": {"P": 22.0, "C": 4.6, "G": 50.0, "Kcal": 579, "cat": "Grassi", "sub": "Frutta Secca"},
+    "Zucchine": {"P": 1.3, "C": 1.4, "G": 0.1, "Kcal": 11, "cat": "Verdura", "sub": "Ortaggi"},
+    "Spinaci": {"P": 3.4, "C": 0.6, "G": 0.7, "Kcal": 23, "cat": "Verdura", "sub": "Ortaggi"},
+    "Mela": {"P": 0.3, "C": 14.0, "G": 0.2, "Kcal": 52, "cat": "Frutta", "sub": "Frutta Standard"}
 }
 
 # BANCA DATI COMPLETA EXTRA PORZIONI MEDIE PRECALCOLATE
-DISPENSA_EXTRA = {
+BANCA_DATI_EXTRA_SORGENTE = {
     "Pizza Margherita": {"Kcal": 700, "info": "1 Porzione Media"},
     "Pizza Farcita": {"Kcal": 950, "info": "1 Porzione Media"},
+    "Spaghetti alle Vongole": {"Kcal": 550, "info": "1 Piatto Ristorante"},
+    "Frittura Mista di Pesce": {"Kcal": 600, "info": "1 Porzione Media"},
     "Birra Chiara": {"Kcal": 140, "info": "1 Bicchiere 33cl"},
     "Birra Doppio Malto": {"Kcal": 220, "info": "1 Bicchiere 33cl"},
     "Gelato Artigianale": {"Kcal": 250, "info": "1 Coppetta Media"},
     "Gin Tonic": {"Kcal": 170, "info": "1 Bicchiere Standard"},
     "Spritz": {"Kcal": 120, "info": "1 Bicchiere Standard"},
-    "Patatine Fritte": {"Kcal": 320, "info": "1 Porzione da Fast Food"},
+    "Calice di Prosecco": {"Kcal": 90, "info": "1 Calice Standard"},
+    "Sorbetto al Limone": {"Kcal": 150, "info": "1 Bicchiere"},
+    "Patatine Fritte": {"Kcal": 320, "info": "1 Porzione Media"},
     "Kebab Completo": {"Kcal": 850, "info": "1 Piadina intera"},
-    "Cornetto Vuoto / Crema": {"Kcal": 300, "info": "1 Pezzo da Bar"},
-    "Piselli Cotti": {"Kcal": 80, "info": "1 Porzione 100g"}
+    "Cornetto alla Crema": {"Kcal": 300, "info": "1 Pezzo da Bar"}
 }
 
 # --- INTERFACCIA SINISTRA: SIDEBAR ---
@@ -141,8 +144,39 @@ target_acqua_manuale = st.sidebar.number_input("Indicazione Acqua (Litri)", valu
 st.sidebar.write("---")
 st.sidebar.subheader("Dispensa Alimenti")
 dispensa_attiva = {}
-for cibo in BANCA_DATI.keys():
-    dispensa_attiva[cibo] = st.sidebar.checkbox(cibo, value=True, key=f"disp_{cibo}")
+categorie_lista = ["Carboidrati", "Proteine", "Grassi", "Verdura", "Frutta"]
+
+for categoria in categorie_lista:
+    with st.sidebar.expander(categoria.upper()):
+        cibi_in_cat = {k: v for k, v in BANCA_DATI.items() if v["cat"] == categoria}
+        sottotipi = sorted(list(set([v["sub"] for v in cibi_in_cat.values()])))
+        for sub in sottotipi:
+            st.markdown(f"**-- {sub} --**")
+            cibi_in_sub = {k: v for k, v in cibi_in_cat.items() if v["sub"] == sub}
+            for cibo in cibi_in_sub.keys():
+                default_val = cibo in ["Riso Basmati", "Petto di Pollo", "Albume d'Uovo", "Olio Extra Vergine d'Oliva", "Zucchine", "Mela"]
+                dispensa_attiva[cibo] = st.checkbox(cibo, value=default_val, key=f"disp_{cibo}")
+
+st.sidebar.write("---")
+st.sidebar.subheader("Dispensa Integratori")
+lista_integratori = [
+    "Proteine ISO", "Proteine Whey", "Creatina", "Carnitina", "Zinco", 
+    "Magnesio", "Cromo", "Vitamina D", "Vitamina C", "Vitamina B", 
+    "Berberina", "Olio di pesce capsule", "Elettroliti per acqua", 
+    "Potassio", "Aminoacidi essenziali", "Aminoacidi ramificati"
+]
+integratori_attivi = {}
+with st.sidebar.expander("INTEGRATORI DISPONIBILI"):
+    for ing in lista_integratori:
+        default_ing = ing in ["Creatina", "Olio di pesce capsule"]
+        integratori_attivi[ing] = st.checkbox(ing, value=default_ing, key=f"ing_{ing}")
+
+st.sidebar.write("---")
+st.sidebar.subheader("Dispensa Extra")
+dispensa_extra_attiva = {}
+with st.sidebar.expander("ALIMENTI EXTRA SOCIAL"):
+    for cibo_ex in BANCA_DATI_EXTRA_SORGENTE.keys():
+        dispensa_extra_attiva[cibo_ex] = st.checkbox(cibo_ex, value=True, key=f"disp_ex_{cibo_ex}")
 
 st.sidebar.write("---")
 st.sidebar.subheader("Configurazione Avanzata Macro Pasti")
@@ -324,13 +358,13 @@ for idx in range(1, numero_pasti_main + 1):
             if idx not in st.session_state.extra_temporanei:
                 st.session_state.extra_temporanei[idx] = []
                 
-            # TESTO SOSTITUITO CON "Pasto Extra" COME RICHIESTO
             st.markdown("<span style='color: #FFB300;'>✨ Pasto Extra</span>", unsafe_allow_html=True)
             
             search_input = st.text_input("🔍 Cerca alimento extra:", key=f"search_{idx}")
             
             if search_input:
-                suggerimenti = [chiave for chiave in DISPENSA_EXTRA.keys() if search_input.lower() in chiave.lower()]
+                # La ricerca filtra SOLO gli alimenti attivati nella "Dispensa Extra" della Sidebar
+                suggerimenti = [chiave for chiave in BANCA_DATI_EXTRA_SORGENTE.keys() if search_input.lower() in chiave.lower() and dispensa_extra_attiva.get(chiave, True)]
                 
                 if suggerimenti:
                     scelta_cibo = st.selectbox("Seleziona l'alimento corretto:", suggerimenti, key=f"select_cibo_{idx}")
@@ -338,12 +372,12 @@ for idx in range(1, numero_pasti_main + 1):
                     col_ex_btn1, col_ex_btn2 = st.columns(2)
                     with col_ex_btn1:
                         if st.button("➕ Aggiungi al Pasto", key=f"add_btn_{idx}", use_container_width=True):
-                            dati_cibo = DISPENSA_EXTRA[scelta_cibo]
+                            dati_cibo = BANCA_DATI_EXTRA_SORGENTE[scelta_cibo]
                             st.session_state.extra_temporanei[idx].append({"alimento": scelta_cibo, "Kcal": dati_cibo["Kcal"], "info": dati_cibo["info"]})
                             st.toast(f"{scelta_cibo} aggiunto!")
                             st.rerun()
                 else:
-                    st.warning("Nessun alimento trovato nella dispensa extra.")
+                    st.warning("Nessun alimento attivo trovato nella dispensa extra.")
             
             if st.session_state.extra_temporanei[idx]:
                 st.write("**Elementi inseriti in questo pasto:**")
