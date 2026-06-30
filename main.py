@@ -343,3 +343,38 @@ st.sidebar.title("Profilo e Impostazioni")
 
 foto_profilo = st.sidebar.file_uploader("Carica la tua foto profilo:", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
 if foto_profilo is not None:
+    st.sidebar.image(foto_profilo, width=120)
+
+nome_atleta = st.sidebar.text_input("Nome Atleta:", value="Nicola Fanin")
+altezza = st.sidebar.number_input("Altezza (cm):", min_value=100, max_value=250, value=190)
+data_nascita = st.sidebar.date_input("Data di Nascita:", value=date(2000, 1, 1), min_value=date(1920, 1, 1), max_value=date(2026, 12, 31))
+eta = 2026 - data_nascita.year - ((6, 30) < (data_nascita.month, data_nascita.day))
+
+st.sidebar.write("---")
+st.sidebar.subheader("Fabbisogno e consumo calorico consigliato")
+
+col_wo1, col_wo2 = st.sidebar.columns(2)
+with col_wo1:
+    pt_kcal_wo = col_wo1.number_input("Fabbisogno WO (Kcal)", value=3346, key="pt_kcal_wo")
+with col_wo2:
+    spesa_prevista_wo = col_wo2.number_input("Consumo Stimato WO (Kcal)", value=3500, key="spesa_wo")
+
+col_rst1, col_rst2 = st.sidebar.columns(2)
+with col_rst1:
+    pt_kcal_rest = col_rst1.number_input("Fabbisogno REST (Kcal)", value=2500, key="pt_kcal_rest")
+with col_rst2:
+    spesa_prevista_rest = col_rst2.number_input("Consumo Stimato REST (Kcal)", value=2200, key="spesa_rest")
+
+st.sidebar.write("---")
+st.sidebar.subheader("Target Idrico Specifico")
+target_acqua_manuale = st.sidebar.number_input("Indicazione Acqua (Litri)", value=4.0, step=0.5)
+
+st.sidebar.write("---")
+st.sidebar.subheader("Dispensa Alimenti")
+dispensa_attiva = {}
+categorie_lista = ["Carboidrati", "Proteine", "Grassi", "Verdura", "Frutta", "Dolcificanti"]
+
+for categoria in categorie_lista:
+    with st.sidebar.expander(categoria.upper()):
+        cibi_in_cat = {k: v for k, v in BANCA_DATI.items() if v["cat"] == categoria}
+        sottotipi = sorted(list(
