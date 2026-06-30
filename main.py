@@ -61,6 +61,10 @@ if "acqua_bevuta" not in st.session_state:
     st.session_state.acqua_bevuta = 0.0
 if "pasti_generati" not in st.session_state:
     st.session_state.pasti_generati = {}
+if "extra_temporanei" not in st.session_state:
+    st.session_state.extra_temporanei = {}
+if "calorie_extra_totali" not in st.session_state:
+    st.session_state.calorie_extra_totali = 0.0
 
 # BANCA DATI COMPLETA DI TUTTI GLI ALIMENTI GENERICI ITALIANI
 BANCA_DATI = {
@@ -86,6 +90,21 @@ BANCA_DATI = {
     "Zucchine": {"P": 1.3, "C": 1.4, "G": 0.1, "Kcal": 11, "cat": "Verdura"},
     "Spinaci": {"P": 3.4, "C": 0.6, "G": 0.7, "Kcal": 23, "cat": "Verdura"},
     "Mela": {"P": 0.3, "C": 14.0, "G": 0.2, "Kcal": 52, "cat": "Frutta"}
+}
+
+# NUOVA DISPENSA EXTRA - PORZIONI MEDIE PRECALCOLATE PER VELOCITÀ DI INSERIMENTO
+DISPENSA_EXTRA = {
+    "Pizza Margherita": {"Kcal": 700, "info": "1 Porzione Media"},
+    "Pizza Farcita": {"Kcal": 950, "info": "1 Porzione Media"},
+    "Birra Chiara": {"Kcal": 140, "info": "1 Bicchiere 33cl"},
+    "Birra Doppio Malto": {"Kcal": 220, "info": "1 Bicchiere 33cl"},
+    "Gelato Artigianale": {"Kcal": 250, "info": "1 Coppetta Media"},
+    "Gin Tonic": {"Kcal": 170, "info": "1 Bicchiere Standard"},
+    "Spritz": {"Kcal": 120, "info": "1 Bicchiere Standard"},
+    "Patatine Fritte": {"Kcal": 320, "info": "1 Porzione da Fast Food"},
+    "Kebab Completo": {"Kcal": 850, "info": "1 Piadina intera"},
+    "Cornetto Vuoto / Crema": {"Kcal": 300, "info": "1 Pezzo da Bar"},
+    "Piselli Cotti": {"Kcal": 80, "info": "1 Porzione 100g"}
 }
 
 # --- INTERFACCIA SINISTRA: SIDEBAR ---
@@ -127,7 +146,6 @@ for cibo in BANCA_DATI.keys():
 
 st.sidebar.write("---")
 st.sidebar.subheader("Configurazione Avanzata Macro Pasti")
-# Massimo configurabile fissato a 7
 macro_pasti_personalizzati = {}
 for i in range(1, 8):
     with st.sidebar.expander(f"Imposta Macro Pasto {i}"):
@@ -163,8 +181,9 @@ else:
 # Scritta del giorno monumentale centrata
 st.markdown(f"<h2 style='text-align: center; letter-spacing: 2px; color: #00D26A;'>{regime_testo}</h2>", unsafe_allow_html=True)
 
-# Calcolo Bilancio Energetico richiesto
-bilancio = fabbisogno_corrente - consumo_corrente
+# INTEGRAZIONE DINAMICA EXTRA DA MEZZANOTTE A MEZZANOTTE SULLE CALORIE TOTALI
+consumo_finale_calcolato = consumo_corrente + st.session_state.calorie_extra_totali
+bilancio = fabbisogno_corrente - consumo_finale_calcolato
 
 # Cruscotto principale racchiuso in un riquadro evidenziato
 st.markdown("<div style='border: 1px solid #444; padding: 20px; border-radius: 10px; background-color: #1a1a1a;'>", unsafe_allow_html=True)
@@ -172,7 +191,7 @@ col1, col2, col3 = st.columns(3)
 with col1:
     st.metric(label="Fabbisogno", value=f"{fabbisogno_corrente} Kcal")
 with col2:
-    st.metric(label="Consumo Stimato", value=f"{consumo_corrente} Kcal")
+    st.metric(label="Consumo Totale", value=f"{consumo_finale_calcolato} Kcal")
 with col3:
     if bilancio < 0:
         st.metric(label="Risultato", value=f"Deficit {bilancio} Kcal")
@@ -214,7 +233,7 @@ with col_w_btn[4]:
 
 st.write("---")
 
-# Sezione Fisico con diciture accorciate e reinserimento completo simmetrie
+# Sezione Fisico con diciture accorciate e simmetrie complete
 st.markdown("<h3 style='text-align: center;'>Composizione Corporea</h3>", unsafe_allow_html=True)
 tab1, tab2 = st.tabs(["Plicometria", "Circonferenze"])
 
@@ -263,7 +282,7 @@ with tab2:
 
 st.write("---")
 
-# --- FUNZIONE LOGICA GENERATORE PASTI AVANZATO ---
+# --- FUNZIONE LOGICA GENERATORE PASTI STANDARD ---
 def genera_singolo_pasto(target_p, target_c, target_g):
     carb_selezionati = [k for k, v in BANCA_DATI.items() if v["cat"] == "Carboidrati" and dispensa_attiva.get(k, True)]
     prot_selezionati = [k for k, v in BANCA_DATI.items() if v["cat"] == "Proteine" and dispensa_attiva.get(k, True)]
@@ -285,7 +304,7 @@ def genera_singolo_pasto(target_p, target_c, target_g):
 
 st.markdown("<h3 style='text-align: center;'>Pianificazione Alimentare Giornaliera</h3>", unsafe_allow_html=True)
 
-# BARRA DI SCELTA NUMERO PASTI NELLA SCHERMATA PRINCIPALE
+# Barra di scelta numero pasti principale centrale
 numero_pasti_main = st.slider("Seleziona numero di pasti giornalieri:", min_value=1, max_value=7, value=5, key="pasti_main")
 
 if st.button("Genera Tutti i Pasti", use_container_width=True, type="primary"):
@@ -293,31 +312,89 @@ if st.button("Genera Tutti i Pasti", use_container_width=True, type="primary"):
         target = macro_pasti_personalizzati.get(idx, {"P": 40, "C": 50, "G": 10})
         st.session_state.pasti_generati[idx] = genera_singolo_pasto(target["P"], target["C"], target["G"])
 
+# Rendering ciclico dei pasti da 1 a 7
 for idx in range(1, numero_pasti_main + 1):
     st.markdown(f"#### Pasto {idx}")
     
     col_pasto_sx, col_pasto_dx = st.columns([2, 1])
     
-    with col_pasto_sx:
-        if idx in st.session_state.pasti_generati:
-            for ingrediente in st.session_state.pasti_generati[idx]:
-                st.write(f"• **{ingrediente['alimento']}**: {ingrediente['grammi']}g ({ingrediente['macro']})")
-        else:
-            st.info("Pasto non ancora generato.")
-            
+    # Rimozione parola 'Forza': la tendina ha solo Workout, Rest, Extra
     with col_pasto_dx:
-        # RIMOSSA l'opzione 'Default': la tendina mostra solo le variazioni forzate o l'allineamento manuale
-        riferimento = st.selectbox("Forza Cambio", ["Usa Impostazioni", "Forza Workout", "Forza Rest", "Forza Extra"], key=f"ref_{idx}", label_visibility="collapsed")
-        if st.button("Genera solo questo", key=f"regen_{idx}", use_container_width=True):
-            if riferimento == "Forza Workout":
-                target = {"P": 50, "C": 70, "G": 5}
-            elif riferimento == "Forza Rest":
-                target = {"P": 40, "C": 30, "G": 15}
-            elif riferimento == "Forza Extra":
-                target = {"P": 20, "C": 100, "G": 30}
-            else:
-                target = macro_pasti_personalizzati.get(idx, {"P": 40, "C": 50, "G": 10})
+        riferimento = st.selectbox("Seleziona Tipo", ["Usa Impostazioni", "Workout", "Rest", "Extra"], key=f"ref_{idx}", label_visibility="collapsed")
+    
+    with col_pasto_sx:
+        if riferimento == "Extra":
+            # Inizializza la lista di cibo per questo pasto extra se non esiste
+            if idx not in st.session_state.extra_temporanei:
+                st.session_state.extra_temporanei[idx] = []
                 
-            st.session_state.pasti_generati[idx] = genera_singolo_pasto(target["P"], target["C"], target["G"])
-            st.rerun()
+            st.markdown("<span style='color: #FFB300;'>✨ Diario Pasto Extra Libero</span>", unsafe_allow_html=True)
+            
+            # Barra di ricerca con autocompletamento intelligente
+            search_input = st.text_input("🔍 Cerca alimento extra (es: pizza, birra, spritz...):", key=f"search_{idx}")
+            
+            if search_input:
+                # Filtra le chiavi della dispensa extra in base a quello che l'utente sta scrivendo
+                suggerimenti = [chiave for chiave in DISPENSA_EXTRA.keys() if search_input.lower() in chiave.lower()]
+                
+                if suggerimenti:
+                    scelta_cibo = st.selectbox("Seleziona l'alimento corretto:", suggerimenti, key=f"select_cibo_{idx}")
+                    
+                    col_ex_btn1, col_ex_btn2 = st.columns(2)
+                    with col_ex_btn1:
+                        if st.button("➕ Aggiungi al Pasto", key=f"add_btn_{idx}", use_container_width=True):
+                            dati_cibo = DISPENSA_EXTRA[scelta_cibo]
+                            st.session_state.extra_temporanei[idx].append({"alimento": scelta_cibo, "Kcal": dati_cibo["Kcal"], "info": dati_cibo["info"]})
+                            st.toast(f"{scelta_cibo} aggiunto!")
+                            st.rerun()
+                else:
+                    st.warning("Nessun alimento trovato nella dispensa extra.")
+            
+            # Mostra gli alimenti attualmente aggiunti a questo pasto extra
+            if st.session_state.extra_temporanei[idx]:
+                st.write("**Elementi inseriti in questo pasto:**")
+                calorico_pasto_corrente = 0
+                for item in st.session_state.extra_temporanei[idx]:
+                    st.write(f"• {item['alimento']} ({item['info']}) → **{item['Kcal']} Kcal**")
+                    calorico_pasto_corrente += item["Kcal"]
+                
+                # Pulsante di conclusione pasto che va a ricalcolare il database globale delle calorie
+                if st.button("✓ Concludi Pasto ed Aggiorna", key=f"concludi_{idx}", use_container_width=True, type="secondary"):
+                    # Salviamo il riepilogo testuale da visualizzare
+                    st.session_state.pasti_generati[idx] = [{"alimento": x["alimento"], "grammi": x["info"], "macro": f"{x['Kcal']} Kcal"} for x in st.session_state.extra_temporanei[idx]]
+                    
+                    # Ricalcolo globale di tutti i pasti contrassegnati come extra per aggiornare l'App Salute interna
+                    totale_temporaneo = 0.0
+                    for p_id, lista_cibi in st.session_state.extra_temporanei.items():
+                        for c in lista_cibi:
+                            totale_temporaneo += c["Kcal"]
+                    st.session_state.calorie_extra_totali = totale_temporaneo
+                    st.rerun()
+            else:
+                st.info("Digita un alimento sopra per comporre il tuo pasto fuori menù.")
+                
+        else:
+            # Flusso standard per Workout e Rest
+            if idx in st.session_state.pasti_generati and not any("Kcal" in ing["macro"] for ing in st.session_state.pasti_generati[idx]):
+                for ingrediente in st.session_state.pasti_generati[idx]:
+                    st.write(f"• **{ingrediente['alimento']}**: {ingrediente['grammi']}g ({ingrediente['macro']})")
+            elif idx in st.session_state.pasti_generati:
+                # Se è stato concluso come Extra, mostra il riepilogo salvato
+                for ingrediente in st.session_state.pasti_generati[idx]:
+                    st.write(f"• **{ingrediente['alimento']}** ({ingrediente['grammi']}) → {ingrediente['macro']}")
+            else:
+                st.info("Pasto non ancora generato.")
+                
+            with col_pasto_dx:
+                if st.button("Genera solo questo", key=f"regen_{idx}", use_container_width=True):
+                    if riferimento == "Workout":
+                        target = {"P": 50, "C": 70, "G": 5}
+                    elif riferimento == "Rest":
+                        target = {"P": 40, "C": 30, "G": 15}
+                    else:
+                        target = macro_pasti_personalizzati.get(idx, {"P": 40, "C": 50, "G": 10})
+                        
+                    st.session_state.pasti_generati[idx] = genera_singolo_pasto(target["P"], target["C"], target["G"])
+                    st.rerun()
+                    
     st.write("---")
