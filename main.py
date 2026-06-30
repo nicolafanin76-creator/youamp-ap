@@ -54,7 +54,7 @@ BANCA_DATI = {
     "Fagioli Lessati": {"P": 6.0, "C": 16.0, "G": 0.5, "Kcal": 91, "cat": "Carboidrati", "sub": "Legumi"},
     "Miele": {"P": 0.6, "C": 80.0, "G": 0.0, "Kcal": 322, "cat": "Carboidrati", "sub": "Zuccheri e Salse"},
     "Marmellata Senza Zucchero": {"P": 0.5, "C": 25.0, "G": 0.1, "Kcal": 105, "cat": "Carboidrati", "sub": "Zuccheri e Salse"},
-    "Petto di Pollo": {"P": 23.0, "C": 0.0, "G": 0.8, "Kcal": 100, "cat": "Proteine", "sub": "Carne Bianca"},
+    "Petto di Pollo": {"P": 23.0, "C": 0.0, "G": 0.8, "100": 100, "Kcal": 100, "cat": "Proteine", "sub": "Carne Bianca"},
     "Fesa di Tacchino": {"P": 24.0, "C": 0.0, "G": 1.2, "Kcal": 107, "cat": "Proteine", "sub": "Carne Bianca"},
     "Lonza di Maiale Sgrassata": {"P": 22.2, "C": 0.0, "G": 4.2, "Kcal": 127, "cat": "Proteine", "sub": "Carne Rossa"},
     "Filetto di Manzo": {"P": 20.5, "C": 0.0, "G": 3.5, "Kcal": 114, "cat": "Proteine", "sub": "Carne Rossa"},
@@ -101,30 +101,36 @@ BANCA_DATI = {
 # --- INTERFACCIA SINISTRA: SIDEBAR ---
 st.sidebar.title("👤 Profilo & Impostazioni PT")
 
+# Sezione per caricamento ed esposizione foto profilo in cima
+foto_profilo = st.sidebar.file_uploader("Carica la tua foto profilo:", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
+if foto_profilo is not None:
+    st.sidebar.image(foto_profilo, width=120)
+else:
+    st.sidebar.markdown("👤 *Nessuna foto profilo caricata*")
+
 nome_atleta = st.sidebar.text_input("Nome Atleta:", value="Nicola Fanin")
 altezza = st.sidebar.number_input("Altezza (cm):", min_value=100, max_value=250, value=190)
 
-# Sblocco totale anni data di nascita (min_value impostato al 1920)
 data_nascita = st.sidebar.date_input("Data di Nascita:", value=date(2000, 1, 1), min_value=date(1920, 1, 1), max_value=date(2026, 12, 31))
 eta = 2026 - data_nascita.year - ((6, 30) < (data_nascita.month, data_nascita.day))
 
 st.sidebar.write("---")
-st.sidebar.subheader("📋 Direttive Personal Trainer")
+st.sidebar.subheader("Fabbisogno e consumo calorico consigliato")
 
 col_wo1, col_wo2 = st.sidebar.columns(2)
 with col_wo1:
     pt_kcal_wo = col_wo1.number_input("Fabbisogno WO (Kcal)", value=3346, key="pt_kcal_wo")
 with col_wo2:
-    spesa_prevista_wo = col_wo2.number_input("Consumo WO (Kcal)", value=3500, key="spesa_wo")
+    spesa_prevista_wo = col_wo2.number_input("Consumo Stimato WO (Kcal)", value=3500, key="spesa_wo")
 
 col_rst1, col_rst2 = st.sidebar.columns(2)
 with col_rst1:
     pt_kcal_rest = col_rst1.number_input("Fabbisogno REST (Kcal)", value=2500, key="pt_kcal_rest")
-with col_rst2:
-    spesa_prevista_rest = col_rst2.number_input("Consumo REST (Kcal)", value=2200, key="spesa_rest")
+with col_wo2:
+    spesa_prevista_rest = col_rst2.number_input("Consumo Stimato REST (Kcal)", value=2200, key="spesa_rest")
 
 st.sidebar.write("---")
-st.sidebar.subheader("💧 Target Idrico Specifico")
+st.sidebar.subheader("Target Idrico Specifico")
 target_acqua_manuale = st.sidebar.number_input("Indicazione Acqua PT (Litri)", value=4.0, step=0.5)
 
 st.sidebar.write("---")
@@ -171,7 +177,6 @@ for i in range(1, numero_pasti + 1):
         macro_pasti_personalizzati[i] = {"P": p_pasto, "C": c_pasto, "G": g_pasto}
 
 st.sidebar.write("---")
-# Tasto per chiudere la sidebar e tornare a tutto schermo sul cellulare
 if st.sidebar.button("💾 Salva Impostazioni PT e Chiudi", use_container_width=True):
     components.html("""<script>window.parent.document.querySelector('.stSidebar [data-testid="collapsedControl"]').click();</script>""", height=0, width=0)
 
