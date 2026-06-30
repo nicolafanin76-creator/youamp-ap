@@ -66,7 +66,7 @@ if "extra_temporanei" not in st.session_state:
 if "calorie_extra_totali" not in st.session_state:
     st.session_state.calorie_extra_totali = 0.0
 
-# BANCA DATI UFFICIALE DI YOUAMP COMPLETAMENTE REVISIONATA NELL'ORTOGRAFIA
+# BANCA DATI UFFICIALE DI YOUAMP COMPLETAMENTE AGGIORNATA
 BANCA_DATI = {
     # --- CARBOIDRATI ---
     "Riso Basmati": {"P": 8.0, "C": 78.0, "G": 0.8, "Kcal": 350, "cat": "Carboidrati", "sub": "Riso e Cereali"},
@@ -180,15 +180,21 @@ BANCA_DATI = {
     "Albicocche": {"P": 1.4, "C": 11.0, "G": 0.4, "Kcal": 48, "cat": "Frutta", "sub": "Frutta Standard"},
     "Ciliegie": {"P": 1.0, "C": 16.0, "G": 0.2, "Kcal": 50, "cat": "Frutta", "sub": "Frutta Standard"},
     "Mela": {"P": 0.3, "C": 14.0, "G": 0.2, "Kcal": 52, "cat": "Frutta", "sub": "Frutta Standard"},
+    "Macedonia di Frutta": {"P": 0.8, "C": 11.5, "G": 0.2, "Kcal": 50, "cat": "Frutta", "sub": "Frutta Standard"},
+
+    # --- SUCCHI, BEVANDE & BEVANDE ZERO ---
     "Succo d'Arancia": {"P": 0.7, "C": 10.0, "G": 0.2, "Kcal": 45, "cat": "Frutta", "sub": "Succhi e Bevande"},
+    "Succhi senza Zucchero": {"P": 0.4, "C": 6.0, "G": 0.1, "Kcal": 28, "cat": "Frutta", "sub": "Succhi e Bevande"},
+    "Bibite senza Zucchero": {"P": 0.0, "C": 0.1, "G": 0.0, "Kcal": 1, "cat": "Frutta", "sub": "Succhi e Bevande"},
 
     # --- DOLCIFICANTI ---
     "Miele": {"P": 0.6, "C": 80.0, "G": 0.0, "Kcal": 322, "cat": "Dolcificanti", "sub": "Zuccheri Fit"},
+    "Marmellata senza Zucchero": {"P": 0.5, "C": 25.0, "G": 0.1, "Kcal": 105, "cat": "Dolcificanti", "sub": "Zuccheri Fit"},
     "Stevia": {"P": 0.0, "C": 0.0, "G": 0.0, "Kcal": 0, "cat": "Dolcificanti", "sub": "Zuccheri Fit"},
     "Dolcificante": {"P": 0.0, "C": 0.0, "G": 0.0, "Kcal": 0, "cat": "Dolcificanti", "sub": "Zuccheri Fit"}
 }
 
-# BANCA DATI EXTRA COMPLETA REVISIONATA NELL'ORTOGRAFIA
+# BANCA DATI EXTRA COMPLETA AGGIORNATA E REVISIONATA NELL'ORTOGRAFIA
 BANCA_DATI_EXTRA_SORGENTE = {
     # --- PIZZE & PINSE ---
     "Pizza Margherita": {"Kcal": 700, "info": "1 Porzione Media"},
@@ -206,6 +212,7 @@ BANCA_DATI_EXTRA_SORGENTE = {
     "Pasta Fresca Condita": {"Kcal": 700, "info": "1 Piatto Ristorante"},
     "Lasagne": {"Kcal": 800, "info": "1 Porzione Ristorante"},
     "Pasta all'Amatriciana": {"Kcal": 750, "info": "1 Piatto Ristorante"},
+    "Orecchiette alle Cime di Rapa": {"Kcal": 550, "info": "1 Piatto Ristorante"},
     "Risotto (Condito)": {"Kcal": 600, "info": "1 Piatto Ristorante"},
     "Insalata di Riso": {"Kcal": 550, "info": "1 Porzione Media"},
     "Tortellini in Brodo": {"Kcal": 420, "info": "1 Piatto Ristorante"},
@@ -221,6 +228,9 @@ BANCA_DATI_EXTRA_SORGENTE = {
     "Panino Fastfood": {"Kcal": 650, "info": "1 Singolo Hamburger Completo"},
 
     # --- SECONDI DI CARNE ---
+    "Carne di Agnello": {"Kcal": 480, "info": "1 Porzione Standard 200g"},
+    "Polpette": {"Kcal": 380, "info": "1 Porzione Standard 4 pezzi"},
+    "Polpette al Sugo": {"Kcal": 460, "info": "1 Porzione Ristorante"},
     "Carne di Maiale alla Griglia": {"Kcal": 450, "info": "1 Porzione Standard"},
     "Carne alla Griglia Mista": {"Kcal": 750, "info": "1 Porzione Ristorante"},
     "Tagliata": {"Kcal": 420, "info": "1 Porzione 250g"},
@@ -246,14 +256,19 @@ BANCA_DATI_EXTRA_SORGENTE = {
     "Filetto Lardellato": {"Kcal": 480, "info": "1 Porzione Standard"},
     "Anatra al Forno": {"Kcal": 460, "info": "1 Porzione Standard"},
 
-    # --- FRITTI & CONTORNI ---
+    # --- FRITTI, CONTORNI & VERDURE SOCIAL ---
+    "Melanzane Fritte": {"Kcal": 290, "info": "1 Porzione 150g"},
+    "Parmigiana di Melanzane": {"Kcal": 580, "info": "1 Porzione Abbondante"},
+    "Caponata": {"Kcal": 240, "info": "1 Porzione Standard"},
     "Mozzarella in Carrozza": {"Kcal": 480, "info": "1 Pezzo Grande"},
     "Mozzarelline Fritte": {"Kcal": 340, "info": "1 Porzione 6 pezzi"},
     "Crocchette di Patate": {"Kcal": 280, "info": "1 Porzione 3 pezzi"},
     "Patate al Forno": {"Kcal": 220, "info": "1 Porzione Media"},
     "Patatine Fritte": {"Kcal": 320, "info": "1 Porzione Media"},
 
-    # --- SECONDI DI PESCE ---
+    # --- SECONDI DI PESCE & ETNICO ---
+    "Rombo al Forno": {"Kcal": 310, "info": "1 Filetto Ristorante"},
+    "Sushi": {"Kcal": 450, "info": "Set Misto Combinato 8 pezzi"},
     "Baccalà Mantecato": {"Kcal": 350, "info": "1 Porzione 100g"},
     "Baccalà alla Vicentina": {"Kcal": 490, "info": "1 Porzione Ristorante"},
     "Polpo": {"Kcal": 180, "info": "1 Porzione Standard Insalata"},
@@ -278,9 +293,12 @@ BANCA_DATI_EXTRA_SORGENTE = {
     "Krapfen Farcito": {"Kcal": 420, "info": "1 Pezzo Grande"},
     "Frittelle": {"Kcal": 290, "info": "1 Porzione 100g"},
     "Frittelle Farcite": {"Kcal": 390, "info": "1 Porzione 100g"},
+    "Brioche Confezionate": {"Kcal": 210, "info": "1 Merendina Standard"},
 
-    # --- PASTICCERIA & DOLCI ---
+    # --- PASTICCERIA & DOLCI EXTRA ---
+    "Gelato Fresco": {"Kcal": 220, "info": "1 Cono Artigianale 2 gusti"},
     "Gelato Artigianale": {"Kcal": 250, "info": "1 Coppetta Media"},
+    "Gelato Confezionato": {"Kcal": 180, "info": "1 Pezzo su Stecco o Cono"},
     "Cheesecake": {"Kcal": 450, "info": "1 Fetta Standard"},
     "Tiramisù": {"Kcal": 480, "info": "1 Porzione Standard"},
     "Torta di Frutta": {"Kcal": 350, "info": "1 Fetta Standard"},
@@ -291,10 +309,15 @@ BANCA_DATI_EXTRA_SORGENTE = {
     "Pandoro": {"Kcal": 410, "info": "1 Fetta 100g"},
     "Torta di Mele": {"Kcal": 320, "info": "1 Fetta Standard"},
     "Millefoglie": {"Kcal": 460, "info": "1 Fetta Standard"},
+    "Nutella": {"Kcal": 81, "info": "1 Cucchiaino 15g"},
+    "Marmellata": {"Kcal": 38, "info": "1 Cucchiaino 15g"},
+    "Uvetta": {"Kcal": 45, "info": "1 Cucchiaio 15g"},
+    "Cioccolato al Latte": {"Kcal": 270, "info": "Mezza Barretta 50g"},
 
-    # --- ALCOLICI & BEVANDE ---
+    # --- ALCOLICI & BEVANDE EXTRA ---
     "Bibita Gassata Dolce": {"Kcal": 130, "info": "1 Lattina 33cl"},
     "The Zuccherati": {"Kcal": 110, "info": "1 Bicchiere/Lattina"},
+    "Succo di Frutta": {"Kcal": 120, "info": "1 Bicchiere Standard"},
     "Gin Tonic": {"Kcal": 170, "info": "1 Bicchiere Standard"},
     "Spritz Aperol": {"Kcal": 140, "info": "1 Bicchiere Standard"},
     "Spritz": {"Kcal": 120, "info": "1 Bicchiere Standard"},
@@ -435,7 +458,7 @@ st.write("---")
 col_input1, col_input2, col_input3 = st.columns(3)
 with col_input1:
     peso_corrente = st.number_input("Peso di Oggi (Kg)", value=91.6, step=0.1)
-    ore_sonno = st.number_input("Ore di Sonno", value=8.0, step=0.5)
+    ore_sonno = st.number_input("Ore di Somno", value=8.0, step=0.5)
 with col_input2:
     passi = st.number_input("Passi Effettuati", value=10000)
     km_percorsi = st.number_input("Distanza (Km)", value=7.2, step=0.1)
