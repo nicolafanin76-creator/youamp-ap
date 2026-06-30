@@ -33,7 +33,7 @@ pwa_html = """
 """
 components.html(pwa_html, height=0, width=0)
 
-# Inizializzazione dello stato per il contatore dell'acqua
+# Inizializzazione dello stato per il contatore dell'acqua ed espansione sidebar
 if "acqua_bevuta" not in st.session_state:
     st.session_state.acqua_bevuta = 0.0
 
@@ -103,26 +103,25 @@ st.sidebar.title("👤 Profilo & Impostazioni PT")
 
 nome_atleta = st.sidebar.text_input("Nome Atleta:", value="Nicola Fanin")
 altezza = st.sidebar.number_input("Altezza (cm):", min_value=100, max_value=250, value=190)
-data_nascita = st.sidebar.date_input("Data di Nascita:", value=date(2000, 1, 1))
-eta = 2026 - data_nascita.year - ((6, 29) < (data_nascita.month, data_nascita.day))
+
+# Sblocco totale anni data di nascita (min_value impostato al 1920)
+data_nascita = st.sidebar.date_input("Data di Nascita:", value=date(2000, 1, 1), min_value=date(1920, 1, 1), max_value=date(2026, 12, 31))
+eta = 2026 - data_nascita.year - ((6, 30) < (data_nascita.month, data_nascita.day))
 
 st.sidebar.write("---")
 st.sidebar.subheader("📋 Direttive Personal Trainer")
 
-# Configurazione Fabbisogni e Consumi affiancati
-st.sidebar.markdown("**🏋️ Giorno WORKOUT**")
 col_wo1, col_wo2 = st.sidebar.columns(2)
 with col_wo1:
-    pt_kcal_wo = col_wo1.number_input("Fabbisogno (Kcal)", value=3346, key="pt_kcal_wo")
+    pt_kcal_wo = col_wo1.number_input("Fabbisogno WO (Kcal)", value=3346, key="pt_kcal_wo")
 with col_wo2:
-    spesa_prevista_wo = col_wo2.number_input("Consumo Stimato (Kcal)", value=3500, key="spesa_wo")
+    spesa_prevista_wo = col_wo2.number_input("Consumo WO (Kcal)", value=3500, key="spesa_wo")
 
-st.sidebar.markdown("**🍏 Giorno REST**")
 col_rst1, col_rst2 = st.sidebar.columns(2)
 with col_rst1:
-    pt_kcal_rest = col_rst1.number_input("Fabbisogno (Kcal)", value=2500, key="pt_kcal_rest")
+    pt_kcal_rest = col_rst1.number_input("Fabbisogno REST (Kcal)", value=2500, key="pt_kcal_rest")
 with col_rst2:
-    spesa_prevista_rest = col_rst2.number_input("Consumo Stimato (Kcal)", value=2200, key="spesa_rest")
+    spesa_prevista_rest = col_rst2.number_input("Consumo REST (Kcal)", value=2200, key="spesa_rest")
 
 st.sidebar.write("---")
 st.sidebar.subheader("💧 Target Idrico Specifico")
@@ -171,6 +170,11 @@ for i in range(1, numero_pasti + 1):
         g_pasto = st.number_input(f"Grassi (g) - P{i}", value=10, key=f"g_p_{i}")
         macro_pasti_personalizzati[i] = {"P": p_pasto, "C": c_pasto, "G": g_pasto}
 
+st.sidebar.write("---")
+# Tasto per chiudere la sidebar e tornare a tutto schermo sul cellulare
+if st.sidebar.button("💾 Salva Impostazioni PT e Chiudi", use_container_width=True):
+    components.html("""<script>window.parent.document.querySelector('.stSidebar [data-testid="collapsedControl"]').click();</script>""", height=0, width=0)
+
 
 # --- SCHERMATA PRINCIPALE (PULITA E MINIMAL) ---
 st.title("YouAmp")
@@ -203,7 +207,7 @@ with col3:
 
 st.write("---")
 
-# Sezione Inserimento Dati Giornalieri Manuali (Predisposta per integrazione futura)
+# Sezione Inserimento Dati Giornalieri Manuali
 col_input1, col_input2 = st.columns(2)
 with col_input1:
     peso_corrente = st.number_input("Peso di Oggi (Kg)", value=91.6, step=0.1)
@@ -220,10 +224,8 @@ st.subheader("Monitoraggio Idratazione")
 col_w1, col_w2 = st.columns([1.2, 1.8])
 with col_w1:
     if st.session_state.acqua_bevuta < target_acqua_manuale:
-        # Scritta ROSSA fino al raggiungimento del target
         st.markdown(f"<h3 style='color: #FF4B4B;'>Bevuti: {st.session_state.acqua_bevuta:.2f} / {target_acqua_manuale:.2f} L ❌</h3>", unsafe_allow_html=True)
     else:
-        # Scritta VERDE al raggiungimento del target
         st.markdown(f"<h3 style='color: #00D26A;'>Target Raggiunto! {st.session_state.acqua_bevuta:.2f} / {target_acqua_manuale:.2f} L ✓</h3>", unsafe_allow_html=True)
 
 with col_w2:
