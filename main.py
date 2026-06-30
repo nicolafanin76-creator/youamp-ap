@@ -99,14 +99,14 @@ BANCA_DATI = {
 }
 
 # --- INTERFACCIA SINISTRA: SIDEBAR ---
-st.sidebar.title("👤 Profilo & Impostazioni PT")
+st.sidebar.title("Profilo e Impostazioni")
 
-# Sezione per caricamento ed esposizione foto profilo in cima
+# Caricamento foto profilo privo di icone decorative
 foto_profilo = st.sidebar.file_uploader("Carica la tua foto profilo:", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
 if foto_profilo is not None:
     st.sidebar.image(foto_profilo, width=120)
 else:
-    st.sidebar.markdown("👤 *Nessuna foto profilo caricata*")
+    st.sidebar.markdown("*Nessuna foto profilo caricata*")
 
 nome_atleta = st.sidebar.text_input("Nome Atleta:", value="Nicola Fanin")
 altezza = st.sidebar.number_input("Altezza (cm):", min_value=100, max_value=250, value=190)
@@ -126,31 +126,31 @@ with col_wo2:
 col_rst1, col_rst2 = st.sidebar.columns(2)
 with col_rst1:
     pt_kcal_rest = col_rst1.number_input("Fabbisogno REST (Kcal)", value=2500, key="pt_kcal_rest")
-with col_wo2:
+with col_rst2:
     spesa_prevista_rest = col_rst2.number_input("Consumo Stimato REST (Kcal)", value=2200, key="spesa_rest")
 
 st.sidebar.write("---")
 st.sidebar.subheader("Target Idrico Specifico")
-target_acqua_manuale = st.sidebar.number_input("Indicazione Acqua PT (Litri)", value=4.0, step=0.5)
+target_acqua_manuale = st.sidebar.number_input("Indicazione Acqua (Litri)", value=4.0, step=0.5)
 
 st.sidebar.write("---")
-st.sidebar.subheader("🛒 La Mia Dispensa")
+st.sidebar.subheader("Dispensa Alimenti")
 dispensa_attiva = {}
 categorie_lista = ["Carboidrati", "Proteine", "Grassi", "Verdura", "Frutta"]
 
 for categoria in categorie_lista:
-    with st.sidebar.expander(f"📂 {categoria.upper()}"):
+    with st.sidebar.expander(categoria.upper()):
         cibi_in_cat = {k: v for k, v in BANCA_DATI.items() if v["cat"] == categoria}
         sottotipi = sorted(list(set([v["sub"] for v in cibi_in_cat.values()])))
         for sub in sottotipi:
-            st.markdown(f"**`-- {sub} --`**")
+            st.markdown(f"**-- {sub} --**")
             cibi_in_sub = {k: v for k, v in cibi_in_cat.items() if v["sub"] == sub}
             for cibo in cibi_in_sub.keys():
                 default_val = cibo in ["Riso Basmati", "Petto di Pollo", "Albume d'Uovo", "Olio Extra Vergine d'Oliva", "Zucchine", "Mela"]
                 dispensa_attiva[cibo] = st.checkbox(cibo, value=default_val, key=f"disp_{cibo}")
 
 st.sidebar.write("---")
-st.sidebar.subheader("💊 Dispensa degli Integratori")
+st.sidebar.subheader("Dispensa Integratori")
 lista_integratori = [
     "Proteine ISO", "Proteine Whey", "Creatina", "Carnitina", "Zinco", 
     "Magnesio", "Cromo", "Vitamina D", "Vitamina C", "Vitamina B", 
@@ -158,18 +158,18 @@ lista_integratori = [
     "Potassio", "Aminoacidi essenziali", "Aminoacidi ramificati"
 ]
 integratori_attivi = {}
-with st.sidebar.expander("📂 INTEGRATORI DISPONIBILI"):
+with st.sidebar.expander("INTEGRATORI DISPONIBILI"):
     for ing in lista_integratori:
         default_ing = ing in ["Creatina", "Olio di pesce capsule"]
         integratori_attivi[ing] = st.checkbox(ing, value=default_ing, key=f"ing_{ing}")
 
 st.sidebar.write("---")
-st.sidebar.subheader("⚙️ Configurazione Avanzata Macro Pasti")
+st.sidebar.subheader("Configurazione Avanzata Macro Pasti")
 numero_pasti = st.sidebar.slider("Seleziona numero di pasti:", min_value=1, max_value=7, value=5)
 
 macro_pasti_personalizzati = {}
 for i in range(1, numero_pasti + 1):
-    with st.sidebar.expander(f"🍽️ Imposta Macro Pasto {i}"):
+    with st.sidebar.expander(f"Imposta Macro Pasto {i}"):
         st.markdown(f"**Pasto {i}**")
         p_pasto = st.number_input(f"Proteine (g) - P{i}", value=40, key=f"p_p_{i}")
         c_pasto = st.number_input(f"Carboidrati (g) - P{i}", value=50, key=f"c_p_{i}")
@@ -177,11 +177,11 @@ for i in range(1, numero_pasti + 1):
         macro_pasti_personalizzati[i] = {"P": p_pasto, "C": c_pasto, "G": g_pasto}
 
 st.sidebar.write("---")
-if st.sidebar.button("💾 Salva Impostazioni PT e Chiudi", use_container_width=True):
+if st.sidebar.button("Salva Impostazioni e Chiudi", use_container_width=True):
     components.html("""<script>window.parent.document.querySelector('.stSidebar [data-testid="collapsedControl"]').click();</script>""", height=0, width=0)
 
 
-# --- SCHERMATA PRINCIPALE (PULITA E MINIMAL) ---
+# --- SCHERMATA PRINCIPALE ---
 st.title("YouAmp")
 st.write("---")
 
