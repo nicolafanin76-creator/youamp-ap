@@ -30,7 +30,6 @@ pwa_html = """
     relManifest.setAttribute('href', manifestURL);
     document.head.appendChild(relManifest);
 
-    // Trasforma l'icona della sidebar in un ingranaggio (⚙️)
     document.addEventListener("DOMContentLoaded", function() {
         setTimeout(function() {
             const sidebarBtn = window.parent.document.querySelector('[data-testid="stSidebarCollapseButton"]');
@@ -41,7 +40,6 @@ pwa_html = """
     });
 </script>
 <style>
-    /* Centraggio globale degli elementi di Streamlit e blocco oscillazioni */
     .stMarkdown, .stButton, .stToggle, .stMetric, h1, h2, h3 {
         text-align: center !important;
         justify-content: center !important;
@@ -59,54 +57,54 @@ pwa_html = """
 """
 components.html(pwa_html, height=0, width=0)
 
-# BANCA DATI UFFICIALE DI YOUAMP COMPLETAMENTE REVISIONATA
+# BANCA DATI METICOLOSA - STRUTTURATA CON SLOT DI CONSUMO ED ESCLUSIONE ERRORI CROSS-MACRO
 BANCA_DATI = {
     # --- CARBOIDRATI ---
-    "Riso Basmati": {"P": 8.0, "C": 78.0, "G": 0.8, "Kcal": 350, "cat": "Carboidrati", "sub": "Riso e Cereali"},
-    "Riso Integrale": {"P": 7.5, "C": 73.0, "G": 1.9, "Kcal": 341, "cat": "Carboidrati", "sub": "Riso e Cereali"},
-    "Riso Soffiato": {"P": 7.0, "C": 80.0, "G": 0.5, "Kcal": 350, "cat": "Carboidrati", "sub": "Riso e Cereali"},
-    "Cornflakes": {"P": 7.0, "C": 84.0, "G": 0.8, "Kcal": 370, "cat": "Carboidrati", "sub": "Cereali Colazione"},
-    "Granola": {"P": 10.0, "C": 65.0, "G": 12.0, "Kcal": 420, "cat": "Carboidrati", "sub": "Cereali Colazione"},
-    "Fiocchi d'Avena": {"P": 11.0, "C": 60.0, "G": 8.0, "Kcal": 366, "cat": "Carboidrati", "sub": "Cereali Colazione"},
-    "Pasta di Semola": {"P": 12.5, "C": 71.3, "G": 1.5, "Kcal": 354, "cat": "Carboidrati", "sub": "Pasta"},
-    "Pasta Integrale": {"P": 13.0, "C": 65.0, "G": 2.0, "Kcal": 330, "cat": "Carboidrati", "sub": "Pasta"},
-    "Pasta di Grano Duro": {"P": 13.0, "C": 73.0, "G": 1.5, "Kcal": 355, "cat": "Carboidrati", "sub": "Pasta"},
-    "Cuscus": {"P": 12.8, "C": 72.4, "G": 0.6, "Kcal": 356, "cat": "Carboidrati", "sub": "Riso e Cereali"},
-    "Gallette di Riso": {"P": 7.9, "C": 81.5, "G": 1.1, "Kcal": 371, "cat": "Carboidrati", "sub": "Pane e Sostituti"},
-    "Patate": {"P": 2.1, "C": 17.9, "G": 0.1, "Kcal": 80, "cat": "Carboidrati", "sub": "Tuberi"},
-    "Patate Dolci": {"P": 1.6, "C": 20.0, "G": 0.1, "Kcal": 86, "cat": "Carboidrati", "sub": "Tuberi"},
-    "Rape": {"P": 1.0, "C": 6.0, "G": 0.1, "Kcal": 28, "cat": "Carboidrati", "sub": "Tuberi"},
+    "Riso Basmati": {"P": 8.0, "C": 78.0, "G": 0.8, "Kcal": 350, "cat": "Carboidrati", "sub": "Riso e Cereali", "slot": ["pranzo_cena"]},
+    "Riso Integrale": {"P": 7.5, "C": 73.0, "G": 1.9, "Kcal": 341, "cat": "Carboidrati", "sub": "Riso e Cereali", "slot": ["pranzo_cena"]},
+    "Riso Soffiato": {"P": 7.0, "C": 80.0, "G": 0.5, "Kcal": 350, "cat": "Carboidrati", "sub": "Riso e Cereali", "slot": ["colazione", "spuntino"]},
+    "Cornflakes": {"P": 7.0, "C": 84.0, "G": 0.8, "Kcal": 370, "cat": "Carboidrati", "sub": "Cereali Colazione", "slot": ["colazione"]},
+    "Granola": {"P": 10.0, "C": 65.0, "G": 12.0, "Kcal": 420, "cat": "Carboidrati", "sub": "Cereali Colazione", "slot": ["colazione"]},
+    "Fiocchi d'Avena": {"P": 11.0, "C": 60.0, "G": 8.0, "Kcal": 366, "cat": "Carboidrati", "sub": "Cereali Colazione", "slot": ["colazione"]},
+    "Pasta di Semola": {"P": 12.5, "C": 71.3, "G": 1.5, "Kcal": 354, "cat": "Carboidrati", "sub": "Pasta", "slot": ["pranzo_cena"]},
+    "Pasta Integrale": {"P": 13.0, "C": 65.0, "G": 2.0, "Kcal": 330, "cat": "Carboidrati", "sub": "Pasta", "slot": ["pranzo_cena"]},
+    "Pasta di Grano Duro": {"P": 13.0, "C": 73.0, "G": 1.5, "Kcal": 355, "cat": "Carboidrati", "sub": "Pasta", "slot": ["pranzo_cena"]},
+    "Cuscus": {"P": 12.8, "C": 72.4, "G": 0.6, "Kcal": 356, "cat": "Carboidrati", "sub": "Riso e Cereali", "slot": ["pranzo_cena"]},
+    "Gallette di Riso": {"P": 7.9, "C": 81.5, "G": 1.1, "Kcal": 371, "cat": "Carboidrati", "sub": "Pane e Sostituti", "slot": ["spuntino", "colazione", "pranzo_cena"]},
+    "Patate": {"P": 2.1, "C": 17.9, "G": 0.1, "Kcal": 80, "cat": "Carboidrati", "sub": "Tuberi", "slot": ["pranzo_cena"]},
+    "Patate Dolci": {"P": 1.6, "C": 20.0, "G": 0.1, "Kcal": 86, "cat": "Carboidrati", "sub": "Tuberi", "slot": ["pranzo_cena"]},
+    "Rape": {"P": 1.0, "C": 6.0, "G": 0.1, "Kcal": 28, "cat": "Carboidrati", "sub": "Tuberi", "slot": ["pranzo_cena"]},
 
     # --- PROTEINE ---
-    "Petto di Pollo": {"P": 23.0, "C": 0.0, "G": 0.8, "Kcal": 100, "cat": "Proteine", "sub": "Carne Bianca"},
-    "Fesa di Tacchino": {"P": 24.0, "C": 0.0, "G": 1.2, "Kcal": 107, "cat": "Proteine", "sub": "Carne Bianca"},
-    "Macinato di Pollo": {"P": 21.0, "C": 0.0, "G": 3.0, "Kcal": 111, "cat": "Proteine", "sub": "Carne Bianca"},
-    "Coniglio": {"P": 22.0, "C": 0.0, "G": 5.0, "Kcal": 133, "cat": "Proteine", "sub": "Carne Bianca"},
-    "Macinato di Coniglio": {"P": 22.0, "C": 0.0, "G": 4.5, "Kcal": 128, "cat": "Proteine", "sub": "Carne Bianca"},
-    "Lonza di Maiale": {"P": 22.0, "C": 0.0, "G": 4.0, "Kcal": 124, "cat": "Proteine", "sub": "Carne Rossa"},
-    "Macinato Magro di Manzo": {"P": 21.0, "C": 0.0, "G": 5.0, "Kcal": 129, "cat": "Proteine", "sub": "Carne Rossa"},
-    "Filetto di Manzo": {"P": 20.5, "C": 0.0, "G": 3.5, "Kcal": 114, "cat": "Proteine", "sub": "Carne Rossa"},
-    "Hamburger di Manzo": {"P": 20.0, "C": 0.0, "G": 6.0, "Kcal": 134, "cat": "Proteine", "sub": "Carne Rossa"},
-    "Carne di Cavallo": {"P": 21.5, "C": 0.0, "G": 2.7, "Kcal": 111, "cat": "Proteine", "sub": "Carne Rossa"},
-    "Bacon": {"P": 14.0, "C": 1.0, "G": 35.0, "Kcal": 375, "cat": "Proteine", "sub": "Affettati e Salumi"},
-    "Bresaola": {"P": 32.0, "C": 0.0, "G": 2.0, "Kcal": 151, "cat": "Proteine", "sub": "Affettati e Salumi"},
-    "Sfilacci di Manzo": {"P": 31.0, "C": 0.0, "G": 3.0, "Kcal": 151, "cat": "Proteine", "sub": "Affettati e Salumi"},
-    "Sfilacci di Cavallo": {"P": 32.0, "C": 0.0, "G": 2.5, "Kcal": 150, "cat": "Proteine", "sub": "Affettati e Salumi"},
-    "Carne Salada": {"P": 23.0, "C": 0.0, "G": 1.5, "Kcal": 105, "cat": "Proteine", "sub": "Affettati e Salumi"},
-    "Prosciutto Crudo": {"P": 26.0, "C": 0.0, "G": 10.0, "Kcal": 194, "cat": "Proteine", "sub": "Affettati e Salumi"},
-    "Albume d'Uovo": {"P": 11.0, "C": 0.7, "G": 0.2, "Kcal": 52, "cat": "Proteine", "sub": "Uova"},
-    "Uovo Intero": {"P": 12.4, "C": 0.0, "G": 8.7, "Kcal": 128, "cat": "Proteine", "sub": "Uova"},
-    "Kefir": {"P": 3.4, "C": 4.0, "G": 1.5, "Kcal": 43, "cat": "Proteine", "sub": "Latticini e Formaggi"},
-    "Skyr": {"P": 11.0, "C": 3.5, "G": 0.2, "Kcal": 60, "cat": "Proteine", "sub": "Latticini e Formaggi"},
-    "Yogurt Greco 0%": {"P": 10.3, "C": 3.0, "G": 0.0, "Kcal": 53, "cat": "Proteine", "sub": "Latticini e Formaggi"},
-    "Fiocchi di Latte": {"P": 12.0, "C": 3.0, "G": 4.5, "Kcal": 101, "cat": "Proteine", "sub": "Latticini e Formaggi"},
-    "Mozzarella Light": {"P": 18.0, "C": 1.0, "G": 9.0, "Kcal": 157, "cat": "Proteine", "sub": "Latticini e Formaggi"},
-    "Ricotta Light": {"P": 9.0, "C": 4.0, "G": 5.0, "Kcal": 97, "cat": "Proteine", "sub": "Latticini e Formaggi"},
-    "Feta Greca": {"P": 14.0, "C": 4.0, "G": 21.0, "Kcal": 261, "cat": "Proteine", "sub": "Latticini e Formaggi"},
-    "Parmigiano": {"P": 33.0, "C": 0.0, "G": 28.0, "Kcal": 392, "cat": "Proteine", "sub": "Latticini e Formaggi"},
-    "Grana Padano": {"P": 33.0, "C": 0.0, "G": 28.0, "Kcal": 392, "cat": "Proteine", "sub": "Latticini e Formaggi"},
-    "Crema di Riso": {"P": 7.3, "C": 79.0, "G": 1.0, "Kcal": 354, "cat": "Proteine", "sub": "Latticini e Formaggi"},
-    "Branzino": {"P": 18.5, "C": 0.0, "G": 2.5, "Kcal": 99, "cat": "Proteine", "sub": "Pesce"},
+    "Petto di Pollo": {"P": 23.0, "C": 0.0, "G": 0.8, "Kcal": 100, "cat": "Proteine", "sub": "Carne Bianca", "slot": ["pranzo_cena"]},
+    "Fesa di Tacchino": {"P": 24.0, "C": 0.0, "G": 1.2, "Kcal": 107, "cat": "Proteine", "sub": "Carne Bianca", "slot": ["pranzo_cena", "spuntino"]},
+    "Macinato di Pollo": {"P": 21.0, "C": 0.0, "G": 3.0, "Kcal": 111, "cat": "Proteine", "sub": "Carne Bianca", "slot": ["pranzo_cena"]},
+    "Coniglio": {"P": 22.0, "C": 0.0, "G": 5.0, "Kcal": 133, "cat": "Proteine", "sub": "Carne Bianca", "slot": ["pranzo_cena"]},
+    "Macinato di Coniglio": {"P": 22.0, "C": 0.0, "G": 4.5, "Kcal": 128, "cat": "Proteine", "sub": "Carne Bianca", "slot": ["pranzo_cena"]},
+    "Lonza di Maiale": {"P": 22.0, "C": 0.0, "G": 4.0, "Kcal": 124, "cat": "Proteine", "sub": "Carne Rossa", "slot": ["pranzo_cena"]},
+    "Macinato Magro di Manzo": {"P": 21.0, "C": 0.0, "G": 5.0, "Kcal": 129, "cat": "Proteine", "sub": "Carne Rossa", "slot": ["pranzo_cena"]},
+    "Filetto di Manzo": {"P": 20.5, "C": 0.0, "G": 3.5, "Kcal": 114, "cat": "Proteine", "sub": "Carne Rossa", "slot": ["pranzo_cena"]},
+    "Hamburger di Manzo": {"P": 20.0, "C": 0.0, "G": 6.0, "Kcal": 134, "cat": "Proteine", "sub": "Carne Rossa", "slot": ["pranzo_cena"]},
+    "Carne di Cavallo": {"P": 21.5, "C": 0.0, "G": 2.7, "Kcal": 111, "cat": "Proteine", "sub": "Carne Rossa", "slot": ["pranzo_cena"]},
+    "Bacon": {"P": 14.0, "C": 1.0, "G": 35.0, "Kcal": 375, "cat": "Proteine", "sub": "Affettati e Salumi", "slot": ["pranzo_cena"]},
+    "Bresaola": {"P": 32.0, "C": 0.0, "G": 2.0, "Kcal": 151, "cat": "Proteine", "sub": "Affettati e Salumi", "slot": ["spuntino", "pranzo_cena"]},
+    "Sfilacci di Manzo": {"P": 31.0, "C": 0.0, "G": 3.0, "Kcal": 151, "cat": "Proteine", "sub": "Affettati e Salumi", "slot": ["spuntino", "pranzo_cena"]},
+    "Sfilacci di Cavallo": {"P": 32.0, "C": 0.0, "G": 2.5, "Kcal": 150, "cat": "Proteine", "sub": "Affettati e Salumi", "slot": ["spuntino", "pranzo_cena"]},
+    "Carne Salada": {"P": 23.0, "C": 0.0, "G": 1.5, "Kcal": 105, "cat": "Proteine", "sub": "Affettati e Salumi", "slot": ["pranzo_cena"]},
+    "Prosciutto Crudo": {"P": 26.0, "C": 0.0, "G": 10.0, "Kcal": 194, "cat": "Proteine", "sub": "Affettati e Salumi", "slot": ["spuntino", "pranzo_cena"]},
+    "Albume d'Uovo": {"P": 11.0, "C": 0.7, "G": 0.2, "Kcal": 52, "cat": "Proteine", "sub": "Uova", "slot": ["colazione", "pranzo_cena"]},
+    "Uovo Intero": {"P": 12.4, "C": 0.0, "G": 8.7, "Kcal": 128, "cat": "Proteine", "sub": "Uova", "slot": ["colazione", "pranzo_cena"]},
+    "Kefir": {"P": 3.4, "C": 4.0, "G": 1.5, "Kcal": 43, "cat": "Proteine", "sub": "Latticini e Formaggi", "slot": ["colazione", "spuntino"]},
+    "Skyr": {"P": 11.0, "C": 3.5, "G": 0.2, "Kcal": 60, "cat": "Proteine", "sub": "Latticini e Formaggi", "slot": ["colazione", "spuntino"]},
+    "Yogurt Greco 0%": {"P": 10.3, "C": 3.0, "G": 0.0, "Kcal": 53, "cat": "Proteine", "sub": "Latticini e Formaggi", "slot": ["colazione", "spuntino"]},
+    "Fiocchi di Latte": {"P": 12.0, "C": 3.0, "G": 4.5, "Kcal": 101, "cat": "Proteine", "sub": "Latticini e Formaggi", "slot": ["spuntino", "pranzo_cena"]},
+    "Mozzarella Light": {"P": 18.0, "C": 1.0, "G": 9.0, "Kcal": 157, "cat": "Proteine", "sub": "Latticini e Formaggi", "slot": ["pranzo_cena"]},
+    "Ricotta Light": {"P": 9.0, "C": 4.0, "G": 5.0, "Kcal": 97, "cat": "Proteine", "sub": "Latticini e Formaggi", "slot": ["pranzo_cena", "spuntino"]},
+    "Feta Greca": {"P": 14.0, "C": 4.0, "G": 21.0, "Kcal": 261, "cat": "Proteine", "sub": "Latticini e Formaggi", "slot": ["pranzo_cena"]},
+    "Parmigiano": {"P": 33.0, "C": 0.0, "G": 28.0, "Kcal": 392, "cat": "Proteine", "sub": "Latticini e Formaggi", "slot": ["pranzo_cena", "spuntino"]},
+    "Grana Padano": {"P": 33.0, "C": 0.0, "G": 28.0, "Kcal": 392, "cat": "Proteine", "sub": "Latticini e Formaggi", "slot": ["pranzo_cena", "spuntino"]},
+    "Crema di Riso": {"P": 7.3, "C": 79.0, "G": 1.0, "Kcal": 354, "cat": "Proteine", "sub": "Latticini e Formaggi", "slot": ["colazione"]},
+    "Branzino": {"P": 18.5, "C": 0.0, "G": 2.5, "Kcal": 99, "cat": "Proteine", "sub": "Pesce", "slot": "Pesce", "sub": "Pesce"},
     "Orata": {"P": 19.8, "C": 0.0, "G": 3.7, "Kcal": 113, "cat": "Proteine", "sub": "Pesce"},
     "Gamberetti": {"P": 18.5, "C": 0.5, "G": 0.6, "Kcal": 81, "cat": "Proteine", "sub": "Pesce"},
     "Salmone": {"P": 20.0, "C": 0.0, "G": 13.0, "Kcal": 197, "cat": "Proteine", "sub": "Pesce"},
@@ -121,7 +119,7 @@ BANCA_DATI = {
     "Mandorle": {"P": 22.0, "C": 4.6, "G": 50.0, "Kcal": 579, "cat": "Grassi", "sub": "Frutta Secca"},
     "Cioccolato Fondente": {"P": 5.0, "C": 50.0, "G": 32.0, "Kcal": 515, "cat": "Grassi", "sub": "Cioccolato e Creme"},
     "Burro d'Arachidi": {"P": 25.0, "C": 20.0, "G": 50.0, "Kcal": 588, "cat": "Grassi", "sub": "Burri e Creme"},
-    "Crema di Mandorle": {"P": 21.0, "C": 19.0, "G": 55.0, "Kcal": 614, "cat": "Grassi", "sub": "Burri e Creme"},
+    "Crema di Mandorle": {"P": 21.0, "C": 19.0, "G": 55.0, "Kcal": 614, "cat": "Burri e Creme"},
     "Hummus": {"P": 5.0, "C": 14.0, "G": 9.0, "Kcal": 166, "cat": "Grassi", "sub": "Salse Fit"},
     "Guacamole": {"P": 2.0, "C": 8.0, "G": 15.0, "Kcal": 157, "cat": "Grassi", "sub": "Salse Fit"},
     "Avocado": {"P": 1.9, "C": 8.6, "G": 15.4, "Kcal": 160, "cat": "Grassi", "sub": "Salse Fit"},
@@ -321,36 +319,39 @@ BANCA_DATI_EXTRA_SORGENTE = {
     "Mojito": {"Kcal": 180, "info": "1 Bicchiere Standard"}
 }
 
-# --- COMBINAZIONE DEI DATABASE PER IL MOTORE DI RICERCA EXTRA ---
 DATABASE_EXTRA_UNIFICATO = {}
-# 1. Inseriamo i cibi extra nativi
 for k, v in BANCA_DATI_EXTRA_SORGENTE.items():
     DATABASE_EXTRA_UNIFICATO[k] = {"Kcal": v["Kcal"], "info": v["info"]}
-# 2. Inseriamo i cibi normali (mappati su porzione media standard da ristorante di 100g)
 for k, v in BANCA_DATI.items():
     DATABASE_EXTRA_UNIFICATO[f"{k} (Porzione da 100g)"] = {"Kcal": v["Kcal"], "info": "100g standard"}
 
-# --- LOGICA DI INIZIALIZZAZIONE E PERSISTENZA AUTOMATICA DATI (LOGIN/SALVATAGGIO) ---
+# --- INIZIALIZZAZIONE STATI DI SESSIONE PER PERSISTENZA ---
 if "acqua_bevuta" not in st.session_state:
     st.session_state.acqua_bevuta = 0.0
 if "pasti_generati" not in st.session_state:
     st.session_state.pasti_generati = {}
 if "extra_temporanei" not in st.session_state:
     st.session_state.extra_temporanei = {}
+if "piani_integratori" not in st.session_state:
+    st.session_state.piani_integratori = {}
 
-# Inizializzazione calorie generate per i due regimi
 if "cal_generate_wo" not in st.session_state:
     st.session_state.cal_generate_wo = 0.0
 if "cal_generate_rest" not in st.session_state:
     st.session_state.cal_generate_rest = 0.0
 
-# Persistenza della memoria macro avanzati (Separati Workout vs Rest)
+# Input reali provenienti dall'App Salute (Dinamici)
+if "app_salute_wo" not in st.session_state:
+    st.session_state.app_salute_wo = 3500.0
+if "app_salute_rest" not in st.session_state:
+    st.session_state.app_salute_rest = 2200.0
+
 if "macro_wo_pasti" not in st.session_state:
     st.session_state.macro_wo_pasti = {i: {"P": 40, "C": 50, "G": 10} for i in range(1, 8)}
 if "macro_rest_pasti" not in st.session_state:
     st.session_state.macro_rest_pasti = {i: {"P": 40, "C": 30, "G": 15} for i in range(1, 8)}
 
-# --- INTERFACCIA SINISTRA: SIDEBAR (IMPOSTAZIONI SALVATE) ---
+# --- INTERFACCIA SINISTRA: SIDEBAR ---
 st.sidebar.title("Profilo e Impostazioni")
 
 foto_profilo = st.sidebar.file_uploader("Carica la tua foto profilo:", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
@@ -408,7 +409,7 @@ lista_integratori = [
 integratori_attivi = {}
 with st.sidebar.expander("INTEGRATORI DISPONIBILI"):
     for ing in lista_integratori:
-        default_ing = ing in ["Creatina", "Olio di pesce capsule"]
+        default_ing = ing in ["Creatina", "Olio di pesce capsule", "Proteine ISO", "Proteine Whey"]
         integratori_attivi[ing] = st.checkbox(ing, value=default_ing, key=f"ing_{ing}")
 
 st.sidebar.write("---")
@@ -441,10 +442,9 @@ if st.sidebar.button("Salva Impostazioni e Chiudi", use_container_width=True):
 
 
 # --- SCHERMATA PRINCIPALE (CENTRATA) ---
-st.markdown("<h1 style='text-align: center;'>YouAmp</h1>", unsafe_allow_html=True)
+st.markdown("<h1>YouAmp</h1>", unsafe_allow_html=True)
 st.write("---")
 
-# Selettore Regime Giornaliero principale centrale
 col_toggle = st.columns([1, 2, 1])
 with col_toggle[1]:
     giorno_workout = st.toggle("Seleziona Regime Giornaliero", value=True)
@@ -452,26 +452,32 @@ with col_toggle[1]:
 if giorno_workout:
     regime_testo = "WORKOUT"
     macro_selezionati_sistema = st.session_state.macro_wo_pasti
-    deficit_wo = pt_kcal_wo - st.session_state.cal_generate_wo
-    deficit_rest = pt_kcal_rest - st.session_state.cal_generate_rest
 else:
     regime_testo = "REST"
     macro_selezionati_sistema = st.session_state.macro_rest_pasti
-    deficit_wo = pt_kcal_wo - st.session_state.cal_generate_wo
-    deficit_rest = pt_kcal_rest - st.session_state.cal_generate_rest
 
-# Scritta monumentale centrata del giorno attivo
-st.markdown(f"<h2 style='text-align: center; letter-spacing: 2px; color: #00D26A;'>{regime_testo}</h2>", unsafe_allow_html=True)
+st.markdown(f"<h2>{regime_testo}</h2>", unsafe_allow_html=True)
 
-# --- CRUSCOTTO MATEMATICO AD ALTA LEGGIBILITÀ COMPATTO (STRETTO ANTI-OSCILLAZIONE) ---
-st.markdown("<h3 style='text-align: center;'>Quadro Energetico Generale</h3>", unsafe_allow_html=True)
+# --- SIMULATORE TRASMISSIONE DATI REALI DA APP CONNESSE (SALUTE / ANDROID) ---
+st.markdown("<h3>Simulatore Sincronizzazione App Connesse</h3>", unsafe_allow_html=True)
+col_sal1, col_sal2 = st.columns(2)
+with col_sal1:
+    st.session_state.app_salute_wo = st.number_input("Kcal Consumate Rilevate App (Giorno WO)", value=st.session_state.app_salute_wo, step=50.0)
+with col_sal2:
+    st.session_state.app_salute_rest = st.number_input("Kcal Consumate Rilevate App (Giorno REST)", value=st.session_state.app_salute_rest, step=50.0)
 
-# Stile CSS Tabella Bianca Compattata (Stretta al 92% per evitare oscillazioni orizzontali)
+# CALCOLO STRITTISSIMO DEL DEFICIT REALE: ( calorie dei pasti - consumo reale rilevato dall'app )
+deficit_wo = st.session_state.cal_generate_wo - st.session_state.app_salute_wo
+deficit_rest = st.session_state.cal_generate_rest - st.session_state.app_salute_rest
+
+# --- CRUSCOTTO ENERGETICO COMPATTO AD ALTA VISIBILITÀ ---
+st.markdown("<h3>Quadro Energetico Generale</h3>", unsafe_allow_html=True)
+
 stile_griglia = """
 <style>
     .quadro-tabella {
-        width: 92% !important;
-        max-width: 480px;
+        width: 100%;
+        max-width: 600px;
         margin: 15px auto !important;
         border-collapse: collapse;
         font-size: 13px !important;
@@ -498,7 +504,7 @@ stile_griglia = """
         background-color: #FFFFFF !important;
     }
     .riga-attiva {
-        border: 2px solid #00D26A !important;
+        border: 3px solid #00D26A !important;
     }
     .tag-attivo {
         color: #00D26A !important;
@@ -508,16 +514,19 @@ stile_griglia = """
 """
 st.markdown(stile_griglia, unsafe_allow_html=True)
 
-# Costruzione della tabella HTML dinamica bianca e stretta
+valore_wo_stringa = f"+{round(deficit_wo)}" if deficit_wo > 0 else f"{round(deficit_wo)}"
+valore_rest_stringa = f"+{round(deficit_rest)}" if deficit_rest > 0 else f"{round(deficit_rest)}"
+
 html_tabella = f"""
 <table class="quadro-tabella">
     <thead>
         <tr>
             <th>Regime</th>
-            <th>Fabbisogno</th>
-            <th>Consumo</th>
-            <th>Pasti</th>
-            <th>Deficit</th>
+            <th>Fabbisogno PT</th>
+            <th>Consumo Stimato PT</th>
+            <th>Calorie Pasti</th>
+            <th>Consumo Reale App</th>
+            <th>Deficit Reale</th>
         </tr>
     </thead>
     <tbody>
@@ -526,19 +535,48 @@ html_tabella = f"""
             <td>{pt_kcal_wo}</td>
             <td>{spesa_prevista_wo}</td>
             <td>{round(st.session_state.cal_generate_wo)}</td>
-            <td>{round(deficit_wo)}</td>
+            <td>{round(st.session_state.app_salute_wo)}</td>
+            <td>{valore_wo_stringa}</td>
         </tr>
         <tr class="{'riga-attiva' if not giorno_workout else ''}">
             <td><span class="{'tag-attivo' if not giorno_workout else ''}">REST {'•' if not giorno_workout else ''}</span></td>
             <td>{pt_kcal_rest}</td>
             <td>{spesa_prevista_rest}</td>
             <td>{round(st.session_state.cal_generate_rest)}</td>
-            <td>{round(deficit_rest)}</td>
+            <td>{round(st.session_state.app_salute_rest)}</td>
+            <td>{valore_rest_stringa}</td>
         </tr>
     </tbody>
 </table>
 """
 st.markdown(html_tabella, unsafe_allow_html=True)
+
+st.write("---")
+
+# Sezione Pianificatore Integratori
+st.markdown("<h3>Pianificatore Integratori Permanenti</h3>", unsafe_allow_html=True)
+integratori_selezionabili = [k for k, v in integratori_attivi.items() if v]
+
+if integratori_selezionabili:
+    col_int1, col_int2, col_int3 = st.columns([2, 1, 1])
+    with col_int1:
+        integratore_scelto = st.selectbox("Seleziona Integratore Attivo", integratori_selezionabili, label_visibility="collapsed")
+    with col_int2:
+        pasto_destinazione = st.selectbox("Assegna a:", [f"Pasto {i}" for i in range(1, 8)], label_visibility="collapsed")
+    with col_int3:
+        if st.button("Abbinamento Permanente", use_container_width=True):
+            p_id = int(pasto_destinazione.split()[-1])
+            if p_id not in st.session_state.piani_integratori:
+                st.session_state.piani_integratori[p_id] = []
+            if integratore_scelto not in st.session_state.piani_integratori[p_id]:
+                st.session_state.piani_integratori[p_id].append(integratore_scelto)
+                st.rerun()
+    if st.session_state.piani_integratori:
+        if st.button("Svuota Piano Integratori Memoria", use_container_width=True, type="secondary"):
+            st.session_state.piani_integratori = {}
+            st.rerun()
+else:
+    st.info("Attiva gli integratori nelle impostazioni della barra laterale per associarli.")
 
 st.write("---")
 
@@ -555,12 +593,12 @@ with col_input3:
 
 st.write("---")
 
-# Monitoraggio Idratazione Dinamica Centrata
-st.markdown("<h3 style='text-align: center;'>Monitoraggio Idratazione</h3>", unsafe_allow_html=True)
+# Monitoraggio Idratazione
+st.markdown("<h3>Monitoraggio Idratazione</h3>", unsafe_allow_html=True)
 if st.session_state.acqua_bevuta < target_acqua_manuale:
-    st.markdown(f"<h3 style='text-align: center; color: #FF4B4B;'>Bevuti: {st.session_state.acqua_bevuta:.2f} / {target_acqua_manuale:.2f} L ❌</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3>Bevuti: {st.session_state.acqua_bevuta:.2f} / {target_acqua_manuale:.2f} L</h3>", unsafe_allow_html=True)
 else:
-    st.markdown(f"<h3 style='text-align: center; color: #00D26A;'>Target Raggiunto! {st.session_state.acqua_bevuta:.2f} / {target_acqua_manuale:.2f} L ✓</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3>Target Raggiunto! {st.session_state.acqua_bevuta:.2f} / {target_acqua_manuale:.2f} L</h3>", unsafe_allow_html=True)
 
 col_w_btn = st.columns([1, 1, 1, 1, 1, 1])
 with col_w_btn[1]:
@@ -574,8 +612,8 @@ with col_w_btn[4]:
 
 st.write("---")
 
-# Sezione Fisico
-st.markdown("<h3 style='text-align: center;'>Composizione Corporea</h3>", unsafe_allow_html=True)
+# Composizione Corporea
+st.markdown("<h3>Composizione Corporea</h3>", unsafe_allow_html=True)
 tab1, tab2 = st.tabs(["Plicometria", "Circonferenze"])
 
 with tab1:
@@ -623,28 +661,59 @@ with tab2:
 
 st.write("---")
 
-# --- FUNZIONE LOGICA GENERATORE PASTI STANDARD ---
-def genera_singolo_pasto(target_p, target_c, target_g):
-    carb_selezionati = [k for k, v in BANCA_DATI.items() if v["cat"] == "Carboidrati" and dispensa_attiva.get(k, True)]
-    prot_selezionati = [k for k, v in BANCA_DATI.items() if v["cat"] == "Proteine" and dispensa_attiva.get(k, True)]
+# --- NUOVO ALGORITMO DI BILANCIAMENTO INCROCIATO DEI MACRO INTER-DIPENDENTI ---
+def genera_singolo_pasto_intelligente(target_p, target_c, target_g, pasto_id):
+    # Selezione in base alla tipologia cronologica del pasto per dare un senso gastronomico reale
+    if pasto_id == 1:
+        tag_filtro = "colazione"
+    elif pasto_id in [2, 4, 6, 7]:
+        tag_filtro = "spuntino"
+    else:
+        tag_filtro = "pranzo_cena"
+
+    carb_selezionati = [k for k, v in BANCA_DATI.items() if v["cat"] == "Carboidrati" and dispensa_attiva.get(k, True) and tag_filtro in v["slot"]]
+    prot_selezionati = [k for k, v in BANCA_DATI.items() if v["cat"] == "Proteine" and dispensa_attiva.get(k, True) and tag_filtro in v["slot"]]
     grassi_selezionati = [k for k, v in BANCA_DATI.items() if v["cat"] == "Grassi" and dispensa_attiva.get(k, True)]
     
-    fonte_c = random.choice(carb_selezionati) if carb_selezionati else "Riso Basmati"
-    fonte_p = random.choice(prot_selezionati) if prot_selezionati else "Petto di Pollo"
+    fonte_c = random.choice(carb_selezionati) if carb_selezionati else "Gallette di Riso"
+    fonte_p = random.choice(prot_selezionati) if prot_selezionati else "Yogurt Greco 0%"
     fonte_g = random.choice(grassi_selezionati) if grassi_selezionati else "Olio Extra Vergine d'Oliva"
+
+    # Fase 1: Calcolo dei Carboidrati principali
+    c_purezza = BANCA_DATI[fonte_c]["C"] / 100.0
+    gr_c = round(target_c / c_purezza) if c_purezza > 0 else 0
     
-    gr_c = round((target_c / BANCA_DATI[fonte_c]["C"]) * 100) if BANCA_DATI[fonte_c]["C"] > 0 else 0
-    gr_p = round((target_p / BANCA_DATI[fonte_p]["P"]) * 100) if BANCA_DATI[fonte_p]["P"] > 0 else 0
-    gr_g = round((target_g / BANCA_DATI[fonte_g]["G"]) * 100) if BANCA_DATI[fonte_g]["G"] > 0 else 0
-    
+    # Estraiamo i macro ombra dei carboidrati generati
+    p_ombra_c = gr_c * (BANCA_DATI[fonte_c]["P"] / 100.0)
+    g_ombra_c = gr_c * (BANCA_DATI[fonte_c]["G"] / 100.0)
+
+    # Fase 2: Calcolo delle Proteine, compensando i macro ombra già inseriti dal carboidrato
+    target_p_rimanente = max(0.0, target_p - p_ombra_c)
+    p_purezza = BANCA_DATI[fonte_p]["P"] / 100.0
+    gr_p = round(target_p_rimanente / p_purezza) if p_purezza > 0 else 0
+
+    # Estraiamo i macro ombra del blocco proteico generato (es. i grassi intrinseci della ricotta/feta)
+    c_ombra_p = gr_p * (BANCA_DATI[fonte_p]["C"] / 100.0)
+    g_ombra_p = gr_p * (BANCA_DATI[fonte_p]["G"] / 100.0)
+
+    # Fase 3: Calcolo dei Grassi (Olio o frutta secca), compensando l'accumulo ombra dei grassi precedenti
+    target_g_rimanente = max(0.0, target_g - g_ombra_c - g_ombra_p)
+    g_purezza = BANCA_DATI[fonte_g]["G"] / 100.0
+    gr_g = round(target_g_rimanente / g_purezza) if g_purezza > 0 else 0
+
+    # Calcolo esatto delle Kcal complessive finali generate dal pasto reale
+    kcal_c = gr_c * (BANCA_DATI[fonte_c]["Kcal"] / 100.0)
+    kcal_p = gr_p * (BANCA_DATI[fonte_p]["Kcal"] / 100.0)
+    kcal_g = gr_g * (BANCA_DATI[fonte_g]["Kcal"] / 100.0)
+    totale_kcal_pasto = kcal_c + kcal_p + kcal_g
+
     return [
-        {"alimento": fonte_c, "grammi": gr_c, "macro": f"C: {target_c}g", "kcal": gr_c * (BANCA_DATI[fonte_c]["Kcal"]/100)},
-        {"alimento": fonte_p, "grammi": gr_p, "macro": f"P: {target_p}g", "kcal": gr_p * (BANCA_DATI[fonte_p]["Kcal"]/100)},
-        {"alimento": fonte_g, "grammi": gr_g, "macro": f"G: {target_g}g", "kcal": gr_g * (BANCA_DATI[fonte_g]["G"]/100)}
-    ]
+        {"alimento": fonte_c, "grammi": gr_c, "macro": f"C: {target_c}g", "kcal": kcal_c, "target_orig": target_p, "tipo_cat": "Carboidrati"},
+        {"alimento": fonte_p, "grammi": gr_p, "macro": f"P: {target_p}g", "kcal": kcal_p, "target_orig": target_p, "tipo_cat": "Proteine"},
+        {"alimento": fonte_g, "grammi": gr_g, "macro": f"G: {target_g}g", "kcal": kcal_g, "target_orig": target_p, "tipo_cat": "Grassi"}
+    ], totale_kcal_pasto
 
-st.markdown("<h3 style='text-align: center;'>Pianificazione Alimentare Giornaliera</h3>", unsafe_allow_html=True)
-
+st.markdown("<h3>Pianificazione Alimentare Giornaliera</h3>", unsafe_allow_html=True)
 numero_pasti_main = st.slider("Seleziona numero di pasti giornalieri:", min_value=1, max_value=7, value=5, key="pasti_main")
 
 if st.button("Genera Tutti i Pasti", use_container_width=True, type="primary"):
@@ -653,9 +722,9 @@ if st.button("Genera Tutti i Pasti", use_container_width=True, type="primary"):
     
     for idx in range(1, numero_pasti_main + 1):
         target = macro_selezionati_sistema.get(idx, {"P": 40, "C": 50, "G": 10})
-        pasto_creato = genera_singolo_pasto(target["P"], target["C"], target["G"])
+        pasto_creato, kcal_pasto = genera_singolo_pasto_intelligente(target["P"], target["C"], target["G"], idx)
         st.session_state.pasti_generati[idx] = pasto_creato
-        totale_kcal_giornaliero += sum(ing["kcal"] for ing in pasto_creato)
+        totale_kcal_giornaliero += kcal_pasto
     
     if giorno_workout:
         st.session_state.cal_generate_wo = totale_kcal_giornaliero
@@ -663,9 +732,22 @@ if st.button("Genera Tutti i Pasti", use_container_width=True, type="primary"):
         st.session_state.cal_generate_rest = totale_kcal_giornaliero
     st.rerun()
 
+# Rendering e Gestione dei pasti
 for idx in range(1, numero_pasti_main + 1):
-    st.markdown(f"#### Pasto {idx}")
-    
+    # Calcolo etichetta del tipo di pasto
+    if idx == 1:
+        tipo_nome_etichetta = "Colazione"
+    elif idx in [2, 4, 6, 7]:
+        tipo_nome_etichetta = "Spuntino"
+    else:
+        tipo_nome_etichetta = "Pranzo/Cena"
+
+    # Recupero e stampa delle Kcal generate per il singolo blocco pasto
+    kcal_del_pasto_corrente = 0.0
+    if idx in st.session_state.pasti_generati:
+        kcal_del_pasto_corrente = sum(ing.get("kcal", 0.0) for ing in st.session_state.pasti_generati[idx])
+
+    st.markdown(f"#### Pasto {idx} - {tipo_nome_etichetta} ({round(kcal_del_pasto_corrente)} Kcal)")
     col_pasto_sx, col_pasto_dx = st.columns([2, 1])
     
     with col_pasto_dx:
@@ -676,34 +758,28 @@ for idx in range(1, numero_pasti_main + 1):
             if idx not in st.session_state.extra_temporanei:
                 st.session_state.extra_temporanei[idx] = []
                 
-            st.markdown("<span style='color: #FFB300;'>✨ Pasto Extra</span>", unsafe_allow_html=True)
-            search_input = st.text_input("🔍 Cerca alimento extra:", key=f"search_{idx}")
+            st.markdown("Pasto Extra")
+            search_input = st.text_input("Cerca alimento extra:", key=f"search_{idx}")
             
             if search_input:
-                # MOTORE UNIFICATO: Cerca sia nei cibi extra sia negli alimenti della dispensa normale attiva
                 suggerimenti = [chiave for chiave in DATABASE_EXTRA_UNIFICATO.keys() if search_input.lower() in chiave.lower()]
-                
                 if suggerimenti:
                     scelta_cibo = st.selectbox("Seleziona l'alimento corretto:", suggerimenti, key=f"select_cibo_{idx}")
-                    
                     col_ex_btn1, col_ex_btn2 = st.columns(2)
                     with col_ex_btn1:
-                        if st.button("➕ Aggiungi al Pasto", key=f"add_btn_{idx}", use_container_width=True):
+                        if st.button("Aggiungi al Pasto", key=f"add_btn_{idx}", use_container_width=True):
                             dati_cibo = DATABASE_EXTRA_UNIFICATO[scelta_cibo]
                             st.session_state.extra_temporanei[idx].append({"alimento": scelta_cibo, "Kcal": dati_cibo["Kcal"], "info": dati_cibo["info"]})
-                            st.toast(f"{scelta_cibo} aggiunto!")
                             st.rerun()
                 else:
-                    st.warning("Nessun alimento corrispondente trovato.")
+                    st.warning("Nessun alimento trovato.")
             
             if st.session_state.extra_temporanei[idx]:
-                st.write("**Elementi inseriti in questo pasto:**")
-                totale_pasto_extra = 0.0
+                st.write("Elementi inseriti in questo pasto:")
                 for item in st.session_state.extra_temporanei[idx]:
-                    st.write(f"• {item['alimento']} ({item['info']}) → **{item['Kcal']} Kcal**")
-                    totale_pasto_extra += item["Kcal"]
+                    st.write(f"• {item['alimento']} ({item['info']}) -> {item['Kcal']} Kcal")
                 
-                if st.button("✓ Concludi Pasto ed Aggiorna", key=f"concludi_{idx}", use_container_width=True, type="secondary"):
+                if st.button("Concludi Pasto ed Aggiorna", key=f"concludi_{idx}", use_container_width=True, type="secondary"):
                     st.session_state.pasti_generati[idx] = [{"alimento": x["alimento"], "grammi": x["info"], "macro": f"{x['Kcal']} Kcal", "kcal": x["Kcal"]} for x in st.session_state.extra_temporanei[idx]]
                     
                     totale_tutti_i_pasti = 0.0
@@ -722,12 +798,50 @@ for idx in range(1, numero_pasti_main + 1):
         else:
             if idx in st.session_state.pasti_generati and not any("Kcal" in ing["macro"] for ing in st.session_state.pasti_generati[idx]):
                 for ingrediente in st.session_state.pasti_generati[idx]:
-                    st.write(f"• **{ingrediente['alimento']}**: {ingrediente['grammi']}g ({ingrediente['macro']})")
+                    if ingrediente['grammi'] > 0:
+                        st.write(f"• **{ingrediente['alimento']}**: {ingrediente['grammi']}g ({ingrediente['macro']})")
+                
+                # Sostituzione Shaker Proteico
+                pasto_ha_cibo_proteico = any(ing["alimento"] in [x for x, y in BANCA_DATI.items() if y["cat"] == "Proteine" and "Polvere" not in x] for ing in st.session_state.pasti_generati[idx])
+                if pasto_ha_cibo_proteico:
+                    col_pasto_dx_btn = st.columns([1,1])
+                    with col_pasto_dx_btn[0]:
+                        riferimento_shk = st.selectbox("Cambia in Shake", ["Scegli Integratore", "Proteine ISO", "Proteine Whey"], key=f"shk_ref_{idx}", label_visibility="collapsed")
+                    with col_pasto_dx_btn[1]:
+                        if st.button("Sostituisci", key=f"swap_shaker_{idx}"):
+                            if riferimento_shk != "Scegli Integratore":
+                                purezza = 0.90 if riferimento_shk == "Proteine ISO" else 0.80
+                                target_p_originale = st.session_state.pasti_generati[idx][0]["target_orig"]
+                                grammi_polvere_necessari = round(target_p_originale / purezza)
+                                kcal_shaker = target_p_originale * 4
+                                
+                                for ing in st.session_state.pasti_generati[idx]:
+                                    if ing.get("tipo_cat") == "Proteine":
+                                        ing["alimento"] = f"{riferimento_shk} in Polvere"
+                                        ing["grammi"] = grammi_polvere_necessari
+                                        ing["macro"] = f"P: {target_p_originale}g"
+                                        ing["kcal"] = kcal_shaker
+                                
+                                totale_tutti_i_pasti = 0.0
+                                for p_id in range(1, numero_pasti_main + 1):
+                                    if p_id in st.session_state.pasti_generati:
+                                        totale_tutti_i_pasti += sum(ing.get("kcal", 0.0) for ing in st.session_state.pasti_generati[p_id])
+                                if giorno_workout:
+                                    st.session_state.cal_generate_wo = totale_tutti_i_pasti
+                                else:
+                                    st.session_state.cal_generate_rest = totale_tutti_i_pasti
+                                st.rerun()
+
             elif idx in st.session_state.pasti_generati:
                 for ingrediente in st.session_state.pasti_generati[idx]:
-                    st.write(f"• **{ingrediente['alimento']}** ({ingrediente['grammi']}) → {ingrediente['macro']}")
+                    st.write(f"• **{ingrediente['alimento']}** ({ingrediente['grammi']}) -> {ingrediente['macro']}")
             else:
                 st.info("Pasto non ancora generato.")
+            
+            if idx in st.session_state.piani_integratori and st.session_state.piani_integratori[idx]:
+                st.markdown("Integratori da assumere:")
+                for integratore in st.session_state.piani_integratori[idx]:
+                    st.write(f"  - {integratore}")
                 
             with col_pasto_dx:
                 if st.button("Genera solo questo", key=f"regen_{idx}", use_container_width=True):
@@ -738,7 +852,7 @@ for idx in range(1, numero_pasti_main + 1):
                     else:
                         target = macro_selezionati_sistema.get(idx, {"P": 40, "C": 50, "G": 10})
                         
-                    pasto_singolo = genera_singolo_pasto(target["P"], target["C"], target["G"])
+                    pasto_singolo, kcal_pasto = genera_singolo_pasto_intelligente(target["P"], target["C"], target["G"], idx)
                     st.session_state.pasti_generati[idx] = pasto_singolo
                     
                     totale_tutti_i_pasti = 0.0
