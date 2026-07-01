@@ -183,14 +183,20 @@ def salva_cache():
         "spesa_rest": st.session_state.get("spesa_rest", 2200),
         "target_acqua_manuale": st.session_state.get("target_acqua_manuale", 4.0),
         "macro_wo_pasti": st.session_state.get("macro_wo_pasti", {}),
-        "macro_rest_pasti": st.session_state.get("macro_rest_pasti", {})
+        "macro_rest_pasti": st.session_state.get("macro_rest_pasti", {}),
+        "peso_corrente": st.session_state.get("peso_corrente", 91.6),
+        "ore_sonno": st.session_state.get("ore_sonno", 8.0),
+        "passi": st.session_state.get("passi", 10000),
+        "km_percorsi": st.session_state.get("km_percorsi", 7.2),
+        "fc_media": st.session_state.get("fc_media", 68),
+        "data_nascita_str": str(st.session_state.get("data_nascita_val", "2000-01-01"))
     }
     with open(CACHE_FILE, "w", encoding="utf-8") as f:
         json.dump(dati, f, ensure_ascii=False, indent=4)
 
 cache_iniziale = carica_cache()
 
-# Inizializzazione controllata con ripristino da file esterno
+# Inizializzazione controllata con ripristino da cache
 if "acqua_bevuta" not in st.session_state:
     st.session_state.acqua_bevuta = cache_iniziale.get("acqua_bevuta", 0.0)
 if "pasti_generati" not in st.session_state:
@@ -212,6 +218,18 @@ if "app_salute_rest" not in st.session_state:
 if "dispensa_slots" not in st.session_state:
     st.session_state.dispensa_slots = cache_iniziale.get("dispensa_slots", {})
 
+# Inizializzazione parametri fisici persistenti
+if "peso_corrente" not in st.session_state:
+    st.session_state.peso_corrente = cache_iniziale.get("peso_corrente", 91.6)
+if "ore_sonno" not in st.session_state:
+    st.session_state.ore_sonno = cache_iniziale.get("ore_sonno", 8.0)
+if "passi" not in st.session_state:
+    st.session_state.passi = cache_iniziale.get("passi", 10000)
+if "km_percorsi" not in st.session_state:
+    st.session_state.km_percorsi = cache_iniziale.get("km_percorsi", 7.2)
+if "fc_media" not in st.session_state:
+    st.session_state.fc_media = cache_iniziale.get("fc_media", 68)
+
 if "macro_wo_pasti" not in st.session_state:
     mwp = cache_iniziale.get("macro_wo_pasti", {})
     if mwp:
@@ -226,34 +244,8 @@ if "macro_rest_pasti" not in st.session_state:
     else:
         st.session_state.macro_rest_pasti = {i: {"P": 40, "C": 30, "G": 15} for i in range(1, 8)}
 
-# Codice PWA Nativo + Modifica Icona Sidebar + CSS Antioscillazione Rigido
+# CSS Nativo Antioscillazione Rigido
 pwa_html = """
-<script>
-    const manifest = {
-        "name": "YouAmp",
-        "short_name": "YouAmp",
-        "start_url": window.location.href,
-        "display": "standalone",
-        "background_color": "#111111",
-        "theme_color": "#000000"
-    };
-    const stringManifest = JSON.stringify(manifest);
-    const blob = new Blob([stringManifest], {type: 'application/json'});
-    const manifestURL = URL.createObjectURL(blob);
-    let relManifest = document.createElement('link');
-    relManifest.setAttribute('rel', 'manifest');
-    relManifest.setAttribute('href', manifestURL);
-    document.head.appendChild(relManifest);
-
-    document.addEventListener("DOMContentLoaded", function() {
-        setTimeout(function() {
-            const sidebarBtn = window.parent.document.querySelector('[data-testid="stSidebarCollapseButton"]');
-            if (sidebarBtn) {
-                sidebarBtn.innerHTML = '<span style="font-size: 24px; cursor: pointer;">⚙️</span>';
-            }
-        }, 1000);
-    });
-</script>
 <style>
     .stMarkdown, .stButton, .stToggle, .stMetric, h1, h2, h3 {
         text-align: center !important;
@@ -271,13 +263,26 @@ pwa_html = """
     }
 </style>
 """
-components.html(pwa_html, height=0, width=0)
+st.markdown(pwa_html, unsafe_allow_html=True)
 
 # --- INTERFACCIA SINISTRA: SIDEBAR ---
 st.sidebar.title("Profilo e Impostazioni")
 
+foto_profilo = st.sidebar.file_uploader("Carica la tua foto profilo:", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
+if foto_profilo is not None:
+    st.sidebar.image(foto_profilo, width=120)
+
 nome_atleta = st.sidebar.text_input("Nome Atleta:", value="Nicola Fanin")
 altezza = st.sidebar.number_input("Altezza (cm):", min_value=100, max_value=250, value=190)
+
+# Parsing data di nascita
+dn_cached_str = cache_iniziale.get("data_nascita_str", "2000-01-01")
+try:
+    dn_parsed = date.fromisoformat(dn_cached_str)
+except:
+    dn_parsed = date(2000, 1, 1)
+data_nascita_input = st.sidebar.date_input("Data di Nascita:", value=dn_parsed, min_value=date(1920, 1, 1), max_value=date(2026, 12, 31), key="data_nascita_val")
+eta = 2026 - data_nascita_input.year - ((6, 30) < (data_nascita_input.month, data_nascita_input.day))
 
 st.sidebar.write("---")
 st.sidebar.subheader("Fabbisogno e consumo calorico consigliato")
@@ -311,14 +316,29 @@ for categoria in categorie_lista:
             cibi_in_sub = {k: v for k, v in cibi_in_cat.items() if v["sub"] == sub}
             for cibo in cibi_in_sub.keys():
                 default_slots = st.session_state.dispensa_slots.get(cibo, BANCA_DATI_BASE[cibo]["slots_default"])
-                
-                scelte_utente = st.multiselect(
-                    f"{cibo}", 
-                    options=["C", "S", "P/C"], 
-                    default=default_slots, 
-                    key=f"slots_{cibo}"
-                )
+                scelte_utente = st.multiselect(f"{cibo}", options=["C", "S", "P/C"], default=default_slots, key=f"slots_{cibo}")
                 st.session_state.dispensa_slots[cibo] = scelte_utente
+
+st.sidebar.write("---")
+st.sidebar.subheader("Dispensa Integratori")
+lista_integratori = [
+    "Proteine ISO", "Proteine Whey", "Creatina", "Carnitina", "Zinco", 
+    "Magnesio", "Cromo", "Vitamina D", "Vitamina C", "Vitamina B", 
+    "Berberina", "Olio di pesce capsule", "Elettroliti per acqua", 
+    "Potassio", "Aminoacidi essenziali", "Aminoacidi ramificati"
+]
+integratori_attivi = {}
+with st.sidebar.expander("INTEGRATORI DISPONIBILI"):
+    for ing in lista_integratori:
+        default_ing = ing in ["Creatina", "Olio di pesce capsule", "Proteine ISO", "Proteine Whey"]
+        integratori_attivi[ing] = st.checkbox(ing, value=default_ing, key=f"ing_{ing}")
+
+st.sidebar.write("---")
+st.sidebar.subheader("Dispensa Extra")
+dispensa_extra_attiva = {}
+with st.sidebar.expander("ALIMENTI EXTRA SOCIAL"):
+    for cibo_ex in BANCA_DATI_EXTRA_SORGENTE.keys():
+        dispensa_extra_attiva[cibo_ex] = st.checkbox(cibo_ex, value=True, key=f"disp_ex_{cibo_ex}")
 
 st.sidebar.write("---")
 st.sidebar.subheader("Configurazione Avanzata Macro Pasti")
@@ -455,6 +475,50 @@ st.markdown(html_tabella, unsafe_allow_html=True)
 
 st.write("---")
 
+# --- SEZIONE INTEGRATORI PERMANENTI INTERATTIVA ---
+st.markdown("<h3>Pianificatore Integratori Permanenti</h3>", unsafe_allow_html=True)
+integratori_selezionabili = [k for k, v in integratori_attivi.items() if v]
+
+if integratori_selezionabili:
+    col_int1, col_int2, col_int3 = st.columns([2, 1, 1])
+    with col_int1:
+        integratore_scelto = st.selectbox("Seleziona Integratore Attivo", integratori_selezionabili, label_visibility="collapsed")
+    with col_int2:
+        pasto_destinazione = st.selectbox("Assegna a:", [f"Pasto {i}" for i in range(1, 8)], label_visibility="collapsed")
+    with col_int3:
+        if st.button("Abbinamento Permanente", use_container_width=True):
+            p_id = int(pasto_destinazione.split()[-1])
+            if p_id not in st.session_state.piani_integratori:
+                st.session_state.piani_integratori[p_id] = []
+            if integratore_scelto not in st.session_state.piani_integratori[p_id]:
+                st.session_state.piani_integratori[p_id].append(integratore_scelto)
+                salva_cache()
+                st.rerun()
+    if st.session_state.piani_integratori:
+        if st.button("Svuota Piano Integratori Memoria", use_container_width=True, type="secondary"):
+            st.session_state.piani_integratori = {}
+            salva_cache()
+            st.rerun()
+else:
+    st.info("Attiva gli integratori nelle impostazioni (⚙️) per abbinarli.")
+
+st.write("---")
+
+# --- INSERIMENTO PARAMETRI FISICI GIORNALIERI (PERSISTENTI) ---
+st.markdown("<h3>Inserimento Parametri Giornalieri</h3>", unsafe_allow_html=True)
+col_input1, col_input2, col_input3 = st.columns(3)
+with col_input1:
+    st.session_state.peso_corrente = st.number_input("Peso di Oggi (Kg)", value=st.session_state.peso_corrente, step=0.1, on_change=salva_cache)
+    st.session_state.ore_sonno = st.number_input("Ore di Sonno", value=st.session_state.ore_sonno, step=0.5, on_change=salva_cache)
+with col_input2:
+    st.session_state.passi = st.number_input("Passi Effettuati", value=st.session_state.passi, step=500, on_change=salva_cache)
+    st.session_state.km_percorsi = st.number_input("Distanza (Km)", value=st.session_state.km_percorsi, step=0.1, on_change=salva_cache)
+with col_input3:
+    st.session_state.fc_media = st.number_input("Frequenza Cardiaca (BPM)", value=st.session_state.fc_media, step=1, on_change=salva_cache)
+
+st.write("---")
+
+# Monitoraggio Idratazione
 st.markdown("<h3>Monitoraggio Idratazione</h3>", unsafe_allow_html=True)
 if st.session_state.acqua_bevuta < target_acqua_manuale:
     st.markdown(f"<h3>Bevuti: {st.session_state.acqua_bevuta:.2f} / {target_acqua_manuale:.2f} L</h3>", unsafe_allow_html=True)
@@ -485,6 +549,7 @@ with col_w_btn[4]:
 
 st.write("---")
 
+# Algoritmo di Generazione Intelligente
 def genera_singolo_pasto_intelligente(target_p, target_c, target_g, pasto_id):
     if pasto_id == 1:
         tag_cercato = "C"
@@ -612,6 +677,12 @@ for idx in range(1, numero_pasti_main + 1):
             else:
                 st.info("Pasto non ancora generato.")
             
+            # Stampa permanente integratori
+            if idx in st.session_state.piani_integratori and st.session_state.piani_integratori[idx]:
+                st.markdown("Integratori da assumere:")
+                for integratore in st.session_state.piani_integratori[idx]:
+                    st.write(f"  - {integratore}")
+                
             with col_pasto_dx:
                 if st.button("Genera solo questo", key=f"regen_{idx}", use_container_width=True):
                     if riferimento == "Workout":
