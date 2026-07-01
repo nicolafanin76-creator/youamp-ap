@@ -121,7 +121,7 @@ BANCA_DATI = {
     "Mandorle": {"P": 22.0, "C": 4.6, "G": 50.0, "Kcal": 579, "cat": "Grassi", "sub": "Frutta Secca"},
     "Cioccolato Fondente": {"P": 5.0, "C": 50.0, "G": 32.0, "Kcal": 515, "cat": "Grassi", "sub": "Cioccolato e Creme"},
     "Burro d'Arachidi": {"P": 25.0, "C": 20.0, "G": 50.0, "Kcal": 588, "cat": "Grassi", "sub": "Burri e Creme"},
-    "Crema di Mandorle": {"P": 21.0, "C": 19.0, "G": 55.0, "Kcal": 614, "cat": "Burri e Creme"},
+    "Crema di Mandorle": {"P": 21.0, "C": 19.0, "G": 55.0, "Kcal": 614, "cat": "Grassi", "sub": "Burri e Creme"},
     "Hummus": {"P": 5.0, "C": 14.0, "G": 9.0, "Kcal": 166, "cat": "Grassi", "sub": "Salse Fit"},
     "Guacamole": {"P": 2.0, "C": 8.0, "G": 15.0, "Kcal": 157, "cat": "Grassi", "sub": "Salse Fit"},
     "Avocado": {"P": 1.9, "C": 8.6, "G": 15.4, "Kcal": 160, "cat": "Grassi", "sub": "Salse Fit"},
@@ -323,8 +323,10 @@ BANCA_DATI_EXTRA_SORGENTE = {
 
 # --- COMBINAZIONE DEI DATABASE PER IL MOTORE DI RICERCA EXTRA ---
 DATABASE_EXTRA_UNIFICATO = {}
+# 1. Inseriamo i cibi extra nativi
 for k, v in BANCA_DATI_EXTRA_SORGENTE.items():
     DATABASE_EXTRA_UNIFICATO[k] = {"Kcal": v["Kcal"], "info": v["info"]}
+# 2. Inseriamo i cibi normali (mappati su porzione media standard da ristorante di 100g)
 for k, v in BANCA_DATI.items():
     DATABASE_EXTRA_UNIFICATO[f"{k} (Porzione da 100g)"] = {"Kcal": v["Kcal"], "info": "100g standard"}
 
@@ -335,8 +337,6 @@ if "pasti_generati" not in st.session_state:
     st.session_state.pasti_generati = {}
 if "extra_temporanei" not in st.session_state:
     st.session_state.extra_temporanei = {}
-if "piani_integratori" not in st.session_state:
-    st.session_state.piani_integratori = {}  # Struttura: {pasto_id: [lista_integratori]}
 
 # Inizializzazione calorie generate per i due regimi
 if "cal_generate_wo" not in st.session_state:
@@ -408,7 +408,7 @@ lista_integratori = [
 integratori_attivi = {}
 with st.sidebar.expander("INTEGRATORI DISPONIBILI"):
     for ing in lista_integratori:
-        default_ing = ing in ["Creatina", "Olio di pesce capsule", "Proteine ISO", "Proteine Whey"]
+        default_ing = ing in ["Creatina", "Olio di pesce capsule"]
         integratori_attivi[ing] = st.checkbox(ing, value=default_ing, key=f"ing_{ing}")
 
 st.sidebar.write("---")
@@ -463,10 +463,10 @@ else:
 # Scritta monumentale centrata del giorno attivo
 st.markdown(f"<h2 style='text-align: center; letter-spacing: 2px; color: #00D26A;'>{regime_testo}</h2>", unsafe_allow_html=True)
 
-# --- CRUSCOTTO MATEMATICO AD ALTA LEGGIBILITÀ (GRIGLIA BIANCA SUPER PULITA E CHIARA) ---
+# --- CRUSCOTTO MATEMATICO AD ALTA LEGGIBILITÀ COMPATTO (STRETTO ANTI-OSCILLAZIONE) ---
 st.markdown("<h3 style='text-align: center;'>Quadro Energetico Generale</h3>", unsafe_allow_html=True)
 
-# Stile CSS per una vera e propria tabella griglia BIANCA, pulitissima e iper-leggibile da mobile
+# Stile CSS Tabella Bianca Compattata (Stretta al 92% per evitare oscillazioni orizzontali)
 stile_griglia = """
 <style>
     .quadro-tabella {
@@ -539,39 +539,6 @@ html_tabella = f"""
 </table>
 """
 st.markdown(html_tabella, unsafe_allow_html=True)
-
-st.write("---")
-
-# --- NUOVA SEZIONE: PIANIFICATORE E ASSEGNAZIONE INTEGRATORI NEI PASTI ---
-st.sidebar.write("---")
-st.markdown("<h3 style='text-align: center;'>Pianificatore Integratori Permanenti</h3>", unsafe_allow_html=True)
-
-# Recupera solo gli integratori flaggati come attivi nella Sidebar
-integratori_selezionabili = [k for k, v in integratori_attivi.items() if v]
-
-if integratori_selezionabili:
-    col_int1, col_int2, col_int3 = st.columns([2, 1, 1])
-    with col_int1:
-        integratore_scelto = st.selectbox("💊 Seleziona Integratore Attivo", integratori_selezionabili, label_visibility="collapsed")
-    with col_int2:
-        pasto_destinazione = st.selectbox("Assegna a:", [f"Pasto {i}" for i in range(1, 8)], label_visibility="collapsed")
-    with col_int3:
-        if st.button("Abbinamento Permanente", use_container_width=True):
-            p_id = int(pasto_destinazione.split()[-1])
-            if p_id not in st.session_state.piani_integratori:
-                st.session_state.piani_integratori[p_id] = []
-            if integratore_scelto not in st.session_state.piani_integratori[p_id]:
-                st.session_state.piani_integratori[p_id].append(integratore_scelto)
-                st.success(f"{integratore_scelto} inserito nel Pasto {p_id}!")
-                st.rerun()
-                
-    # Opzione rapida per ripulire la memoria degli integratori
-    if st.session_state.piani_integratori:
-        if st.button("Svuota Piano Integratori Memoria", use_container_width=True, type="secondary"):
-            st.session_state.piani_integratori = {}
-            st.rerun()
-else:
-    st.info("Attiva gli integratori nella sezione impostazioni (⚙️) per abbinarli ai pasti.")
 
 st.write("---")
 
@@ -671,9 +638,9 @@ def genera_singolo_pasto(target_p, target_c, target_g):
     gr_g = round((target_g / BANCA_DATI[fonte_g]["G"]) * 100) if BANCA_DATI[fonte_g]["G"] > 0 else 0
     
     return [
-        {"alimento": fonte_c, "grammi": gr_c, "macro": f"C: {target_c}g", "kcal": gr_c * (BANCA_DATI[fonte_c]["Kcal"]/100), "target_orig": target_p},
-        {"alimento": fonte_p, "grammi": gr_p, "macro": f"P: {target_p}g", "kcal": gr_p * (BANCA_DATI[fonte_p]["Kcal"]/100), "target_orig": target_p},
-        {"alimento": fonte_g, "grammi": gr_g, "macro": f"G: {target_g}g", "kcal": gr_g * (BANCA_DATI[fonte_g]["G"]/100), "target_orig": target_p}
+        {"alimento": fonte_c, "grammi": gr_c, "macro": f"C: {target_c}g", "kcal": gr_c * (BANCA_DATI[fonte_c]["Kcal"]/100)},
+        {"alimento": fonte_p, "grammi": gr_p, "macro": f"P: {target_p}g", "kcal": gr_p * (BANCA_DATI[fonte_p]["Kcal"]/100)},
+        {"alimento": fonte_g, "grammi": gr_g, "macro": f"G: {target_g}g", "kcal": gr_g * (BANCA_DATI[fonte_g]["G"]/100)}
     ]
 
 st.markdown("<h3 style='text-align: center;'>Pianificazione Alimentare Giornaliera</h3>", unsafe_allow_html=True)
@@ -713,6 +680,7 @@ for idx in range(1, numero_pasti_main + 1):
             search_input = st.text_input("🔍 Cerca alimento extra:", key=f"search_{idx}")
             
             if search_input:
+                # MOTORE UNIFICATO: Cerca sia nei cibi extra sia negli alimenti della dispensa normale attiva
                 suggerimenti = [chiave for chiave in DATABASE_EXTRA_UNIFICATO.keys() if search_input.lower() in chiave.lower()]
                 
                 if suggerimenti:
@@ -754,50 +722,12 @@ for idx in range(1, numero_pasti_main + 1):
         else:
             if idx in st.session_state.pasti_generati and not any("Kcal" in ing["macro"] for ing in st.session_state.pasti_generati[idx]):
                 for ingrediente in st.session_state.pasti_generati[idx]:
-                    if ingrediente['grammi'] > 0:
-                        st.write(f"• **{ingrediente['alimento']}**: {ingrediente['grammi']}g ({ingrediente['macro']})")
-                
-                pasto_ha_cibo_proteico = any(ing["alimento"] in [x for x, y in BANCA_DATI.items() if y["cat"] == "Proteine" and "Polvere" not in x] for ing in st.session_state.pasti_generati[idx])
-                
-                if pasto_ha_cibo_proteico:
-                    col_pasto_dx_btn = st.columns([1,1])
-                    with col_pasto_dx_btn[0]:
-                        riferimento_shk = st.selectbox("Cambia in Shake", ["Scegli Integratore", "Proteine ISO", "Proteine Whey"], key=f"shk_ref_{idx}", label_visibility="collapsed")
-                    with col_pasto_dx_btn[1]:
-                        if st.button("🥤 Sostituisci", key=f"swap_shaker_{idx}"):
-                            if riferimento_shk != "Scegli Integratore":
-                                purezza = 0.90 if riferimento_shk == "Proteine ISO" else 0.80
-                                target_p_originale = st.session_state.pasti_generati[idx][0]["target_orig"]
-                                grammi_polvere_necessari = round(target_p_originale / purezza)
-                                kcal_shaker = target_p_originale * 4
-                                
-                                for ing in st.session_state.pasti_generati[idx]:
-                                    if BANCA_DATI.get(ing["alimento"], {}).get("cat") == "Proteine":
-                                        ing["alimento"] = f"{riferimento_shk} in Polvere"
-                                        ing["grammi"] = grammi_polvere_necessari
-                                        ing["macro"] = f"P: {target_p_originale}g"
-                                        ing["kcal"] = kcal_shaker
-                                
-                                totale_tutti_i_pasti = 0.0
-                                for p_id in range(1, numero_pasti_main + 1):
-                                    if p_id in st.session_state.pasti_generati:
-                                        totale_tutti_i_pasti += sum(ing.get("kcal", 0.0) for ing in st.session_state.pasti_generati[p_id])
-                                if giorno_workout:
-                                    st.session_state.cal_generate_wo = totale_tutti_i_pasti
-                                else:
-                                    st.session_state.cal_generate_rest = totale_tutti_i_pasti
-                                st.rerun()
-
+                    st.write(f"• **{ingrediente['alimento']}**: {ingrediente['grammi']}g ({ingrediente['macro']})")
             elif idx in st.session_state.pasti_generati:
                 for ingrediente in st.session_state.pasti_generati[idx]:
                     st.write(f"• **{ingrediente['alimento']}** ({ingrediente['grammi']}) → {ingrediente['macro']}")
             else:
                 st.info("Pasto non ancora generato.")
-            
-            if idx in st.session_state.piani_integratori and st.session_state.piani_integratori[idx]:
-                st.markdown("<span style='color: #00D26A; font-size:13px;'>💊 Integratori da assumere:</span>", unsafe_allow_html=True)
-                for integratore in st.session_state.piani_integratori[idx]:
-                    st.write(f"  ↳ **{integratore}** ✓")
                 
             with col_pasto_dx:
                 if st.button("Genera solo questo", key=f"regen_{idx}", use_container_width=True):
