@@ -269,4 +269,574 @@ BANCA_DATI_EXTRA_SORGENTE = {
 }
 
 DATABASE_EXTRA_UNIFICATO = {}
-for k, v in BANCA
+for k, v in BANCA_DATI_EXTRA_SORGENTE.items():
+    DATABASE_EXTRA_UNIFICATO[k] = {"Kcal": v["Kcal"], "info": v["info"]}
+for k, v in BANCA_DATI_BASE.items():
+    DATABASE_EXTRA_UNIFICATO[f"{k} (Porzione da 100g)"] = {"Kcal": v["Kcal"], "info": "100g standard"}
+
+# --- LOGICA DI SALVATAGGIO E RIPRISTINO PERMANENTE (CACHE JSON) ---
+def carica_cache():
+    if os.path.exists(CACHE_FILE):
+        try:
+            with open(CACHE_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except:
+            return {}
+    return {}
+
+def salva_cache():
+    dati = {
+        "acqua_bevuta": st.session_state.get("acqua_bevuta", 0.0),
+        "pasti_generati": st.session_state.get("pasti_generati", {}),
+        "piani_integratori": st.session_state.get("piani_integratori", {}),
+        "cal_generate_wo": st.session_state.get("cal_generate_wo", 0.0),
+        "cal_generate_rest": st.session_state.get("cal_generate_rest", 0.0),
+        "app_salute_wo": st.session_state.get("app_salute_wo", 3500.0),
+        "app_salute_rest": st.session_state.get("app_salute_rest", 2200.0),
+        "dispensa_slots": st.session_state.get("dispensa_slots", {}),
+        "pt_kcal_wo": st.session_state.get("pt_kcal_wo", 3346),
+        "spesa_wo": st.session_state.get("spesa_wo", 3500),
+        "pt_kcal_rest": st.session_state.get("pt_kcal_rest", 2500),
+        "spesa_rest": st.session_state.get("spesa_rest", 2200),
+        "target_acqua_manuale": st.session_state.get("target_acqua_manuale", 4.0),
+        "macro_wo_pasti": st.session_state.get("macro_wo_pasti", {}),
+        "macro_rest_pasti": st.session_state.get("macro_rest_pasti", {}),
+        "peso_corrente": st.session_state.get("peso_corrente", 91.6),
+        "ore_sonno": st.session_state.get("ore_sonno", 8.0),
+        "passi": st.session_state.get("passi", 10000),
+        "km_percorsi": st.session_state.get("km_percorsi", 7.2),
+        "fc_media": st.session_state.get("fc_media", 68),
+        "data_nascita_str": str(st.session_state.get("data_nascita_val", "2000-01-01"))
+    }
+    with open(CACHE_FILE, "w", encoding="utf-8") as f:
+        json.dump(dati, f, ensure_ascii=False, indent=4)
+
+cache_iniziale = carica_cache()
+
+# Inizializzazione controllata con ripristino da cache
+if "acqua_bevuta" not in st.session_state:
+    st.session_state.acqua_bevuta = cache_iniziale.get("acqua_bevuta", 0.0)
+if "pasti_generati" not in st.session_state:
+    pg = cache_iniziale.get("pasti_generati", {})
+    st.session_state.pasti_generati = {int(k): v for k, v in pg.items()}
+if "piani_integratori" not in st.session_state:
+    pi = cache_iniziale.get("piani_integratori", {})
+    st.session_state.piani_integratori = {int(k): v for k, v in pi.items()}
+if "extra_temporanei" not in st.session_state:
+    st.session_state.extra_temporanei = {}
+if "cal_generate_wo" not in st.session_state:
+    st.session_state.cal_generate_wo = cache_iniziale.get("cal_generate_wo", 0.0)
+if "cal_generate_rest" not in st.session_state:
+    st.session_state.cal_generate_rest = cache_iniziale.get("cal_generate_rest", 0.0)
+if "app_salute_wo" not in st.session_state:
+    st.session_state.app_salute_wo = cache_iniziale.get("app_salute_wo", 3500.0)
+if "app_salute_rest" not in st.session_state:
+    st.session_state.app_salute_rest = cache_iniziale.get("app_salute_rest", 2200.0)
+if "dispensa_slots" not in st.session_state:
+    st.session_state.dispensa_slots = cache_iniziale.get("dispensa_slots", {})
+
+if "peso_corrente" not in st.session_state:
+    st.session_state.peso_corrente = cache_iniziale.get("peso_corrente", 91.6)
+if "ore_sonno" not in st.session_state:
+    st.session_state.ore_sonno = cache_iniziale.get("ore_sonno", 8.0)
+if "passi" not in st.session_state:
+    st.session_state.passi = cache_iniziale.get("passi", 10000)
+if "km_percorsi" not in st.session_state:
+    st.session_state.km_percorsi = cache_iniziale.get("km_percorsi", 7.2)
+if "fc_media" not in st.session_state:
+    st.session_state.fc_media = cache_iniziale.get("fc_media", 68)
+
+if "macro_wo_pasti" not in st.session_state:
+    mwp = cache_iniziale.get("macro_wo_pasti", {})
+    if mwp:
+        st.session_state.macro_wo_pasti = {int(k): v for k, v in mwp.items()}
+    else:
+        st.session_state.macro_wo_pasti = {i: {"P": 40, "C": 50, "G": 10} for i in range(1, 8)}
+
+if "macro_rest_pasti" not in st.session_state:
+    mrp = cache_iniziale.get("macro_rest_pasti", {})
+    if mrp:
+        st.session_state.macro_rest_pasti = {int(k): v for k, v in mrp.items()}
+    else:
+        st.session_state.macro_rest_pasti = {i: {"P": 40, "C": 30, "G": 15} for i in range(1, 8)}
+
+# CSS Nativo Antioscillazione Rigido
+pwa_html = """
+<style>
+    .stMarkdown, .stButton, .stToggle, .stMetric, h1, h2, h3 {
+        text-align: center !important;
+        justify-content: center !important;
+    }
+    div[data-testid="stMetricValue"] {
+        text-align: center !important;
+    }
+    div[data-testid="stBlock"] {
+        text-align: center !important;
+    }
+    html, body {
+        overflow-x: hidden !important;
+        max-width: 100% !important;
+    }
+</style>
+"""
+st.markdown(pwa_html, unsafe_allow_html=True)
+
+# --- INTERFACCIA SINISTRA: SIDEBAR ---
+st.sidebar.title("Profilo e Impostazioni")
+
+foto_profilo = st.sidebar.file_uploader("Carica la tua foto profilo:", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
+if foto_profilo is not None:
+    st.sidebar.image(foto_profilo, width=120)
+
+nome_atleta = st.sidebar.text_input("Nome Atleta:", value="Nicola Fanin")
+altezza = st.sidebar.number_input("Altezza (cm):", min_value=100, max_value=250, value=190)
+
+dn_cached_str = cache_iniziale.get("data_nascita_str", "2000-01-01")
+try:
+    dn_parsed = date.fromisoformat(dn_cached_str)
+except:
+    dn_parsed = date(2000, 1, 1)
+data_nascita_input = st.sidebar.date_input("Data di Nascita:", value=dn_parsed, min_value=date(1920, 1, 1), max_value=date(2026, 12, 31), key="data_nascita_val")
+eta = 2026 - data_nascita_input.year - ((6, 30) < (data_nascita_input.month, data_nascita_input.day))
+
+st.sidebar.write("---")
+st.sidebar.subheader("Fabbisogno e consumo calorico consigliato")
+
+col_wo1, col_wo2 = st.sidebar.columns(2)
+with col_wo1:
+    pt_kcal_wo = col_wo1.number_input("Fabbisogno WO (Kcal)", value=cache_iniziale.get("pt_kcal_wo", 3346), key="pt_kcal_wo")
+with col_wo2:
+    spesa_prevista_wo = col_wo2.number_input("Consumo Stimato WO (Kcal)", value=cache_iniziale.get("spesa_wo", 3500), key="spesa_wo")
+
+col_rst1, col_rst2 = st.sidebar.columns(2)
+with col_rst1:
+    pt_kcal_rest = col_rst1.number_input("Fabbisogno REST (Kcal)", value=cache_iniziale.get("pt_kcal_rest", 2500), key="pt_kcal_rest")
+with col_rst2:
+    spesa_prevista_rest = col_rst2.number_input("Consumo Stimato REST (Kcal)", value=cache_iniziale.get("spesa_rest", 2200), key="spesa_rest")
+
+st.sidebar.write("---")
+st.sidebar.subheader("Target Idrico Specifico")
+target_acqua_manuale = st.sidebar.number_input("Indicazione Acqua (Litri)", value=cache_iniziale.get("target_acqua_manuale", 4.0), key="target_acqua_manuale", step=0.5)
+
+st.sidebar.write("---")
+st.sidebar.subheader("Dispensa Alimenti")
+dispensa_attiva = {}
+categorie_lista = ["Carboidrati", "Proteine", "Grassi", "Verdura", "Frutta", "Dolcificanti"]
+
+for category in categorie_lista:
+    with st.sidebar.expander(category.upper()):
+        cibi_in_cat = {k: v for k, v in BANCA_DATI_BASE.items() if v["cat"] == category}
+        sottotipi = sorted(list(set([v["sub"] for v in cibi_in_cat.values()])))
+        for sub in sottotipi:
+            st.markdown(f"**-- {sub} --**")
+            cibi_in_sub = {k: v for k, v in cibi_in_cat.items() if v["sub"] == sub}
+            for cibo in cibi_in_sub.keys():
+                default_slots = st.session_state.dispensa_slots.get(cibo, BANCA_DATI_BASE[cibo]["slots_default"])
+                scelte_utente = st.multiselect(f"{cibo}", options=["C", "S", "P/C"], default=default_slots, key=f"slots_{cibo}")
+                st.session_state.dispensa_slots[cibo] = scelte_utente
+
+st.sidebar.write("---")
+st.sidebar.subheader("Dispensa Integratori")
+lista_integratori = [
+    "Proteine ISO", "Proteine Whey", "Creatina", "Carnitina", "Zinco", 
+    "Magnesio", "Cromo", "Vitamina D", "Vitamina C", "Vitamina B", 
+    "Berberina", "Olio di pesce capsule", "Elettroliti per acqua", 
+    "Potassio", "Aminoacidi essenziali", "Aminoacidi ramificati"
+]
+integratori_attivi = {}
+with st.sidebar.expander("INTEGRATORI DISPONIBILI"):
+    for ing in lista_integratori:
+        default_ing = ing in ["Creatina", "Olio di pesce capsule", "Proteine ISO", "Proteine Whey"]
+        integratori_attivi[ing] = st.checkbox(ing, value=default_ing, key=f"ing_{ing}")
+
+st.sidebar.write("---")
+st.sidebar.subheader("Dispensa Extra")
+dispensa_extra_attiva = {}
+with st.sidebar.expander("ALIMENTI EXTRA SOCIAL"):
+    for cibo_ex in BANCA_DATI_EXTRA_SORGENTE.keys():
+        dispensa_extra_attiva[cibo_ex] = st.checkbox(cibo_ex, value=True, key=f"disp_ex_{cibo_ex}")
+
+st.sidebar.write("---")
+st.sidebar.subheader("Configurazione Avanzata Macro Pasti")
+
+with st.sidebar.expander("GIORNI WORKOUT - MACRO PASTI"):
+    for i in range(1, 8):
+        st.markdown(f"**Pasto {i} (Workout)**")
+        st.session_state.macro_wo_pasti[i]["P"] = st.number_input(f"Proteine (g) - P{i} WO", value=st.session_state.macro_wo_pasti[i]["P"], key=f"p_wo_{i}")
+        st.session_state.macro_wo_pasti[i]["C"] = st.number_input(f"Carboidrati (g) - P{i} WO", value=st.session_state.macro_wo_pasti[i]["C"], key=f"c_wo_{i}")
+        st.session_state.macro_wo_pasti[i]["G"] = st.number_input(f"Grassi (g) - P{i} WO", value=st.session_state.macro_wo_pasti[i]["G"], key=f"g_wo_{i}")
+
+with st.sidebar.expander("GIORNI REST - MACRO PASTI"):
+    for i in range(1, 8):
+        st.markdown(f"**Pasto {i} (Rest)**")
+        st.session_state.macro_rest_pasti[i]["P"] = st.number_input(f"Proteine (g) - P{i} REST", value=st.session_state.macro_rest_pasti[i]["P"], key=f"p_rst_{i}")
+        st.session_state.macro_rest_pasti[i]["C"] = st.number_input(f"Carboidrati (g) - P{i} REST", value=st.session_state.macro_rest_pasti[i]["C"], key=f"c_rst_{i}")
+        st.session_state.macro_rest_pasti[i]["G"] = st.number_input(f"Grassi (g) - P{i} REST", value=st.session_state.macro_rest_pasti[i]["G"], key=f"g_rst_{i}")
+
+st.sidebar.write("---")
+if st.sidebar.button("Salva Configurazione Permanente", use_container_width=True):
+    salva_cache()
+    components.html("""<script>window.parent.document.querySelector('.stSidebar [data-testid="collapsedControl"]').click();</script>""", height=0, width=0)
+    st.rerun()
+
+
+# --- SCHERMATA PRINCIPALE (CENTRATA) ---
+st.markdown("<h1>YouAmp</h1>", unsafe_allow_html=True)
+st.write("---")
+
+col_toggle = st.columns([1, 2, 1])
+with col_toggle[1]:
+    giorno_workout = st.toggle("Seleziona Regime Giornaliero", value=True)
+
+if giorno_workout:
+    regime_testo = "WORKOUT"
+    macro_selezionati_sistema = st.session_state.macro_wo_pasti
+else:
+    regime_testo = "REST"
+    macro_selezionati_sistema = st.session_state.macro_rest_pasti
+
+st.markdown(f"<h2>{regime_testo}</h2>", unsafe_allow_html=True)
+
+st.markdown("<h3>Simulatore Sincronizzazione App Connesse</h3>", unsafe_allow_html=True)
+col_sal1, col_sal2 = st.columns(2)
+with col_sal1:
+    st.session_state.app_salute_wo = st.number_input("Kcal Consumate Rilevate App (Giorno WO)", value=st.session_state.app_salute_wo, step=50.0, on_change=salva_cache)
+with col_sal2:
+    st.session_state.app_salute_rest = st.number_input("Kcal Consumate Rilevate App (Giorno REST)", value=st.session_state.app_salute_rest, step=50.0, on_change=salva_cache)
+
+deficit_wo = st.session_state.cal_generate_wo - st.session_state.app_salute_wo
+deficit_rest = st.session_state.cal_generate_rest - st.session_state.app_salute_rest
+
+st.markdown("<h3>Quadro Energetico Generale</h3>", unsafe_allow_html=True)
+
+stile_griglia = """
+<style>
+    .quadro-tabella {
+        width: 100%;
+        max-width: 600px;
+        margin: 15px auto !important;
+        border-collapse: collapse;
+        font-size: 13px !important;
+        font-family: sans-serif;
+        text-align: center;
+        background-color: #FFFFFF !important;
+        table-layout: fixed;
+    }
+    .quadro-tabella th {
+        background-color: #F0F2F6 !important;
+        color: #111111 !important;
+        font-weight: bold;
+        padding: 8px !important;
+        border: 1px solid #CCCCCC !important;
+    }
+    .quadro-tabella td {
+        padding: 8px !important;
+        border: 1px solid #CCCCCC !important;
+        color: #111111 !important;
+        word-wrap: break-word;
+    }
+    .quadro-tabella tr:nth-of-type(even) {
+        background-color: #F8F9FA !important;
+    }
+    .quadro-tabella tr:nth-of-type(odd) {
+        background-color: #FFFFFF !important;
+    }
+    .riga-attiva {
+        border: 3px solid #00D26A !important;
+    }
+    .tag-attivo {
+        color: #00D26A !important;
+        font-weight: bold;
+    }
+</style>
+"""
+st.markdown(stile_griglia, unsafe_allow_html=True)
+
+valore_wo_stringa = f"+{round(deficit_wo)}" if deficit_wo > 0 else f"{round(deficit_wo)}"
+valore_rest_stringa = f"+{round(deficit_rest)}" if deficit_rest > 0 else f"{round(deficit_rest)}"
+
+html_tabella = f"""
+<table class="quadro-tabella">
+    <thead>
+        <tr>
+            <th style="width: 15%;">Regime</th>
+            <th style="width: 17%;">Fabbisogno PT</th>
+            <th style="width: 18%;">Consumo Stimato PT</th>
+            <th style="width: 17%;">Calorie Pasti</th>
+            <th style="width: 18%;">Consumo Reale App</th>
+            <th style="width: 15%;">Deficit Reale</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="{'riga-attiva' if giorno_workout else ''}">
+            <td><span class="{'tag-attivo' if giorno_workout else ''}">WO {'•' if giorno_workout else ''}</span></td>
+            <td>{pt_kcal_wo}</td>
+            <td>{spesa_prevista_wo}</td>
+            <td>{round(st.session_state.cal_generate_wo)}</td>
+            <td>{round(st.session_state.app_salute_wo)}</td>
+            <td>{valore_wo_stringa}</td>
+        </tr>
+        <tr class="{'riga-attiva' if not giorno_workout else ''}">
+            <td><span class="{'tag-attivo' if not giorno_workout else ''}">REST {'•' if not giorno_workout else ''}</span></td>
+            <td>{pt_kcal_rest}</td>
+            <td>{spesa_prevista_rest}</td>
+            <td>{round(st.session_state.cal_generate_rest)}</td>
+            <td>{round(st.session_state.app_salute_rest)}</td>
+            <td>{valore_rest_stringa}</td>
+        </tr>
+    </tbody>
+</table>
+"""
+st.markdown(html_tabella, unsafe_allow_html=True)
+
+st.write("---")
+
+# --- SEZIONE INTEGRATORI PERMANENTI INTERATTIVA ---
+st.markdown("<h3>Pianificatore Integratori Permanenti</h3>", unsafe_allow_html=True)
+integratori_selezionabili = [k for k, v in integratori_attivi.items() if v]
+
+if integratori_selezionabili:
+    col_int1, col_int2, col_int3 = st.columns([2, 1, 1])
+    with col_int1:
+        integratore_scelto = st.selectbox("Seleziona Integratore Attivo", integratori_selezionabili, label_visibility="collapsed")
+    with col_int2:
+        pasto_destinazione = st.selectbox("Assegna a:", [f"Pasto {i}" for i in range(1, 8)], label_visibility="collapsed")
+    with col_int3:
+        if st.button("Abbinamento Permanente", use_container_width=True):
+            p_id = int(pasto_destinazione.split()[-1])
+            if p_id not in st.session_state.piani_integratori:
+                st.session_state.piani_integratori[p_id] = []
+            if integratore_scelto not in st.session_state.piani_integratori[p_id]:
+                st.session_state.piani_integratori[p_id].append(integratore_scelto)
+                salva_cache()
+                st.rerun()
+    if st.session_state.piani_integratori:
+        if st.button("Svuota Piano Integratori Memoria", use_container_width=True, type="secondary"):
+            st.session_state.piani_integratori = {}
+            salva_cache()
+            st.rerun()
+else:
+    st.info("Attiva gli integratori nelle impostazioni (⚙️) per abbinarli.")
+
+st.write("---")
+
+# --- INSERIMENTO PARAMETRI FISICI GIORNALIERI (PERSISTENTI) ---
+st.markdown("<h3>Inserimento Parametri Giornalieri</h3>", unsafe_allow_html=True)
+col_input1, col_input2, col_input3 = st.columns(3)
+with col_input1:
+    st.session_state.peso_corrente = st.number_input("Peso di Oggi (Kg)", value=st.session_state.peso_corrente, step=0.1, on_change=salva_cache)
+    st.session_state.ore_sonno = st.number_input("Ore di Sonno", value=st.session_state.ore_sonno, step=0.5, on_change=salva_cache)
+with col_input2:
+    st.session_state.passi = st.number_input("Passi Effettuati", value=st.session_state.passi, step=500, on_change=salva_cache)
+    st.session_state.km_percorsi = st.number_input("Distanza (Km)", value=st.session_state.km_percorsi, step=0.1, on_change=salva_cache)
+with col_input3:
+    st.session_state.fc_media = st.number_input("Frequenza Cardiaca (BPM)", value=st.session_state.fc_media, step=1, on_change=salva_cache)
+
+st.write("---")
+
+# Monitoraggio Idratazione
+st.markdown("<h3>Monitoraggio Idratazione</h3>", unsafe_allow_html=True)
+if st.session_state.acqua_bevuta < target_acqua_manuale:
+    st.markdown(f"<h3>Bevuti: {st.session_state.acqua_bevuta:.2f} / {target_acqua_manuale:.2f} L</h3>", unsafe_allow_html=True)
+else:
+    st.markdown(f"<h3>Target Raggiunto! {st.session_state.acqua_bevuta:.2f} / {target_acqua_manuale:.2f} L</h3>", unsafe_allow_html=True)
+
+col_w_btn = st.columns([1, 1, 1, 1, 1, 1])
+with col_w_btn[1]:
+    if st.button("+50ml"): 
+        st.session_state.acqua_bevuta += 0.05
+        salva_cache()
+        st.rerun()
+with col_w_btn[2]:
+    if st.button("+250ml"): 
+        st.session_state.acqua_bevuta += 0.25
+        salva_cache()
+        st.rerun()
+with col_w_btn[3]:
+    if st.button("+500ml"): 
+        st.session_state.acqua_bevuta += 0.50
+        salva_cache()
+        st.rerun()
+with col_w_btn[4]:
+    if st.button("Reset"): 
+        st.session_state.acqua_bevuta = 0.0
+        salva_cache()
+        st.rerun()
+
+st.write("---")
+
+def genera_singolo_pasto_intelligente(target_p, target_c, target_g, pasto_id):
+    if pasto_id == 1:
+        tag_cercato = "C"
+    elif pasto_id in [2, 4, 6, 7]:
+        tag_cercato = "S"
+    else:
+        tag_cercato = "P/C"
+
+    carb_selezionati = [k for k, v in BANCA_DATI_BASE.items() if v["cat"] == "Carboidrati" and tag_cercato in st.session_state.dispensa_slots.get(k, [])]
+    prot_selezionati = [k for k, v in BANCA_DATI_BASE.items() if v["cat"] == "Proteine" and tag_cercato in st.session_state.dispensa_slots.get(k, [])]
+    grassi_selezionati = [k for k, v in BANCA_DATI_BASE.items() if v["cat"] == "Grassi" and tag_cercato in st.session_state.dispensa_slots.get(k, [])]
+    
+    fonte_c = random.choice(carb_selezionati) if carb_selezionati else "Gallette di Riso"
+    fonte_p = random.choice(prot_selezionati) if prot_selezionati else "Yogurt Greco 0%"
+    fonte_g = random.choice(grassi_selezionati) if grassi_selezionati else "Olio Extra Vergine d'Oliva"
+
+    c_purezza = BANCA_DATI_BASE[fonte_c]["C"] / 100.0
+    gr_c = round(target_c / c_purezza) if c_purezza > 0 else 0
+    
+    p_ombra_c = gr_c * (BANCA_DATI_BASE[fonte_c]["P"] / 100.0)
+    g_ombra_c = gr_c * (BANCA_DATI_BASE[fonte_c]["G"] / 100.0)
+
+    target_p_rimanente = max(0.0, target_p - p_ombra_c)
+    p_purezza = BANCA_DATI_BASE[fonte_p]["P"] / 100.0
+    gr_p = round(target_p_rimanente / p_purezza) if p_purezza > 0 else 0
+
+    g_ombra_p = gr_p * (BANCA_DATI_BASE[fonte_p]["G"] / 100.0)
+
+    target_g_rimanente = max(0.0, target_g - g_ombra_c - g_ombra_p)
+    g_purezza = BANCA_DATI_BASE[fonte_g]["G"] / 100.0
+    gr_g = round(target_g_rimanente / g_purezza) if g_purezza > 0 else 0
+
+    kcal_c = gr_c * (BANCA_DATI_BASE[fonte_c]["Kcal"] / 100.0)
+    kcal_p = gr_p * (BANCA_DATI_BASE[fonte_p]["Kcal"] / 100.0)
+    kcal_g = gr_g * (BANCA_DATI_BASE[fonte_g]["Kcal"] / 100.0)
+    totale_kcal_pasto = kcal_c + kcal_p + kcal_g
+
+    return [
+        {"alimento": fonte_c, "grammi": gr_c, "macro": f"C: {target_c}g", "kcal": kcal_c, "target_orig": target_p, "tipo_cat": "Carboidrati"},
+        {"alimento": fonte_p, "grammi": gr_p, "macro": f"P: {target_p}g", "kcal": kcal_p, "target_orig": target_p, "tipo_cat": "Proteine"},
+        {"alimento": fonte_g, "grammi": gr_g, "macro": f"G: {target_g}g", "kcal": kcal_g, "target_orig": target_p, "tipo_cat": "Grassi"}
+    ], totale_kcal_pasto
+
+st.markdown("<h3>Pianificazione Alimentare Giornaliera</h3>", unsafe_allow_html=True)
+numero_pasti_main = st.slider("Seleziona numero di pasti giornalieri:", min_value=1, max_value=7, value=5, key="pasti_main")
+
+if st.button("Genera Tutti i Pasti", use_container_width=True, type="primary"):
+    st.session_state.pasti_generati = {}
+    totale_kcal_giornaliero = 0.0
+    
+    for idx in range(1, numero_pasti_main + 1):
+        target = macro_selezionati_sistema.get(idx, {"P": 40, "C": 50, "G": 10})
+        pasto_creato, kcal_pasto = genera_singolo_pasto_intelligente(target["P"], target["C"], target["G"], idx)
+        st.session_state.pasti_generati[idx] = pasto_creato
+        totale_kcal_giornaliero += kcal_pasto
+    
+    if giorno_workout:
+        st.session_state.cal_generate_wo = totale_kcal_giornaliero
+    else:
+        st.session_state.cal_generate_rest = totale_kcal_giornaliero
+    salva_cache()
+    st.rerun()
+
+for idx in range(1, numero_pasti_main + 1):
+    if idx == 1:
+        tipo_nome_etichetta = "Colazione"
+    elif idx in [2, 4, 6, 7]:
+        tipo_nome_etichetta = "Spuntino"
+    else:
+        tipo_nome_etichetta = "Pranzo/Cena"
+
+    kcal_del_pasto_corrente = 0.0
+    if idx in st.session_state.pasti_generati:
+        kcal_del_pasto_corrente = sum(ing.get("kcal", 0.0) for ing in st.session_state.pasti_generati[idx])
+
+    st.markdown(f"#### Pasto {idx} - {tipo_nome_etichetta} ({round(kcal_del_pasto_corrente)} Kcal)")
+    col_pasto_sx, col_pasto_dx = st.columns([2, 1])
+    
+    with col_pasto_dx:
+        riferimento = st.selectbox("Seleziona Tipo", ["Usa Impostazioni", "Workout", "Rest", "Extra"], key=f"ref_{idx}", label_visibility="collapsed")
+    
+    with col_pasto_sx:
+        if riferimento == "Extra":
+            if idx not in st.session_state.extra_temporanei:
+                st.session_state.extra_temporanei[idx] = []
+                
+            st.markdown("Pasto Extra")
+            
+            # TASTO DI RESET FISSO ACCESSIBILE PER ANNULLARE / CANCELLARE TUTTO IL CONTENUTO DI QUESTO SLOT EXTRA
+            if st.button("Resetta Pasto Extra", key=f"reset_full_ex_{idx}", type="secondary", use_container_width=True):
+                st.session_state.extra_temporanei[idx] = []
+                if idx in st.session_state.pasti_generati:
+                    del st.session_state.pasti_generati[idx]
+                
+                totale_tutti_i_pasti = 0.0
+                for p_id in range(1, numero_pasti_main + 1):
+                    if p_id in st.session_state.pasti_generati:
+                        totale_tutti_i_pasti += sum(ing.get("kcal", 0.0) for ing in st.session_state.pasti_generati[p_id])
+                if giorno_workout:
+                    st.session_state.cal_generate_wo = totale_tutti_i_pasti
+                else:
+                    st.session_state.cal_generate_rest = totale_tutti_i_pasti
+                salva_cache()
+                st.rerun()
+                
+            search_input = st.text_input("Cerca alimento extra:", key=f"search_{idx}")
+            
+            if search_input:
+                suggerimenti = [chiave for chiave in DATABASE_EXTRA_UNIFICATO.keys() if search_input.lower() in chiave.lower()]
+                if suggerimenti:
+                    scelta_cibo = st.selectbox("Seleziona l'alimento corretto:", suggerimenti, key=f"select_cibo_{idx}")
+                    if st.button("Aggiungi al Pasto", key=f"add_btn_{idx}", use_container_width=True):
+                        dati_cibo = DATABASE_EXTRA_UNIFICATO[scelta_cibo]
+                        st.session_state.extra_temporanei[idx].append({"alimento": scelta_cibo, "Kcal": dati_cibo["Kcal"], "info": dati_cibo["info"]})
+                        st.rerun()
+            
+            if st.session_state.extra_temporanei[idx]:
+                for item in st.session_state.extra_temporanei[idx]:
+                    st.write(f"• {item['alimento']} ({item['info']}) -> {item['Kcal']} Kcal")
+                
+                if st.button("✓ Concludi ed Aggiorna", key=f"concludi_{idx}", use_container_width=True, type="primary"):
+                    st.session_state.pasti_generati[idx] = [{"alimento": x["alimento"], "grammi": x["info"], "macro": f"{x['Kcal']} Kcal", "kcal": x["Kcal"]} for x in st.session_state.extra_temporanei[idx]]
+                    
+                    totale_tutti_i_pasti = 0.0
+                    for p_id in range(1, numero_pasti_main + 1):
+                        if p_id in st.session_state.pasti_generati:
+                            totale_tutti_i_pasti += sum(ing.get("kcal", 0.0) for ing in st.session_state.pasti_generati[p_id])
+                    
+                    if giorno_workout:
+                        st.session_state.cal_generate_wo = totale_tutti_i_pasti
+                    else:
+                        st.session_state.cal_generate_rest = totale_tutti_i_pasti
+                    salva_cache()
+                    st.rerun()
+        else:
+            if idx in st.session_state.pasti_generati and not any("Kcal" in ing["macro"] for ing in st.session_state.pasti_generati[idx]):
+                for ingrediente in st.session_state.pasti_generati[idx]:
+                    if ingrediente['grammi'] > 0:
+                        st.write(f"• **{ingrediente['alimento']}**: {ingrediente['grammi']}g ({ingrediente['macro']})")
+            elif idx in st.session_state.pasti_generati:
+                for ingrediente in st.session_state.pasti_generati[idx]:
+                    st.write(f"• **{ingrediente['alimento']}** ({ingrediente['grammi']}) -> {ingrediente['macro']}")
+            else:
+                st.info("Pasto non ancora generato.")
+            
+            if idx in st.session_state.piani_integratori and st.session_state.piani_integratori[idx]:
+                st.markdown("Integratori da assumere:")
+                for integratore in st.session_state.piani_integratori[idx]:
+                    st.write(f"  - {integratore}")
+                
+            with col_pasto_dx:
+                if st.button("Genera solo questo", key=f"regen_{idx}", use_container_width=True):
+                    if riferimento == "Workout":
+                        target = {"P": 50, "C": 70, "G": 5}
+                    elif riferimento == "Rest":
+                        target = {"P": 40, "C": 30, "G": 15}
+                    else:
+                        target = macro_selezionati_sistema.get(idx, {"P": 40, "C": 50, "G": 10})
+                        
+                    pasto_singolo, kcal_pasto = genera_singolo_pasto_intelligente(target["P"], target["C"], target["G"], idx)
+                    st.session_state.pasti_generati[idx] = pasto_singolo
+                    
+                    totale_tutti_i_pasti = 0.0
+                    for p_id in range(1, numero_pasti_main + 1):
+                        if p_id in st.session_state.pasti_generati:
+                            totale_tutti_i_pasti += sum(ing.get("kcal", 0.0) for ing in st.session_state.pasti_generati[p_id])
+                    
+                    if giorno_workout:
+                        st.session_state.cal_generate_wo = totale_tutti_i_pasti
+                    else:
+                        st.session_state.cal_generate_rest = totale_tutti_i_pasti
+                    salva_cache()
+                    st.rerun()
+                    
+    st.write("---")
